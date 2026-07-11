@@ -6,6 +6,10 @@ import { DashboardPage } from './pages/Dashboard'
 import { AgentWorkspacePage } from './pages/AgentWorkspace'
 import { TaskRegistryPage } from './pages/TaskRegistry'
 import { TaskDetailPage } from './pages/TaskDetail'
+import { ToolCenterPage } from './pages/ToolCenter'
+import { ProjectIntelligencePage } from './pages/ProjectIntelligence'
+import { MemoryCenterPage } from './pages/MemoryCenter'
+import { SystemIntelligencePage } from './pages/SystemIntelligence'
 
 export function App() {
   return (
@@ -18,6 +22,10 @@ export function App() {
             <Route path="/agent" element={<AgentWorkspacePage />} />
             <Route path="/tasks" element={<TaskRegistryPage />} />
             <Route path="/agent/:id" element={<TaskDetailPage />} />
+            <Route path="/tools" element={<ToolCenterPage />} />
+            <Route path="/projects" element={<ProjectIntelligencePage />} />
+            <Route path="/memory" element={<MemoryCenterPage />} />
+            <Route path="/system" element={<SystemIntelligencePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

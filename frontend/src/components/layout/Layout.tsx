@@ -11,6 +11,10 @@ const NAV = [
   { to: '/', label: 'Console', icon: ConsoleIcon, end: true },
   { to: '/agent', label: 'Agent Workspace', icon: AgentIcon, end: false },
   { to: '/tasks', label: 'Task Registry', icon: RegistryIcon, end: false },
+  { to: '/tools', label: 'Tool Center', icon: ToolIcon, end: false },
+  { to: '/projects', label: 'Project Intel', icon: ProjectIcon, end: false },
+  { to: '/memory', label: 'Memory Center', icon: MemoryIcon, end: false },
+  { to: '/system', label: 'System Intel', icon: SystemIcon, end: false },
 ]
 
 export function Layout() {
@@ -123,6 +127,37 @@ function RegistryIcon({ className }: IconProps) {
       <circle cx="7" cy="6" r="0.8" fill="currentColor" />
       <circle cx="11" cy="12" r="0.8" fill="currentColor" />
       <circle cx="9" cy="18" r="0.8" fill="currentColor" />
+    </svg>
+  )
+}
+function ToolIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M14.5 6.5a3.5 3.5 0 1 1-4.4 4.4l-5 5a2 2 0 1 0 3 3l5-5a3.5 3.5 0 0 0 4.4-4.4l-2 2-2-2 2-2z" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function ProjectIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M3 7l9-4 9 4-9 4-9-4z" strokeLinejoin="round" />
+      <path d="M3 12l9 4 9-4M3 17l9 4 9-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function MemoryIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="4" y="6" width="16" height="12" rx="2" />
+      <path d="M8 6v-2M12 6v-2M16 6v-2M8 20v-2M12 20v-2M16 20v-2" strokeLinecap="round" />
+    </svg>
+  )
+}
+function SystemIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" strokeLinecap="round" />
     </svg>
   )
 }

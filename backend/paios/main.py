@@ -105,13 +105,14 @@ def create_app() -> FastAPI:
     )
 
     # Register routes.
-    from paios.api.routes import agent, dashboard, projects, system, tools
+    from paios.api.routes import agent, dashboard, memory, projects, system, tools
     from paios.api.websocket import router as ws_router
 
     app.include_router(agent.router)
     app.include_router(system.router)
     app.include_router(tools.router)
     app.include_router(projects.router)
+    app.include_router(memory.router)
     app.include_router(dashboard.router)
     app.include_router(ws_router)
 
@@ -150,6 +151,7 @@ def create_app() -> FastAPI:
                     "system": "/api/system",
                     "tools": "/api/tools",
                     "projects": "/api/projects",
+                    "memory": "/api/memory",
                 },
                 "docs": "/docs",
                 "websocket": "/ws",

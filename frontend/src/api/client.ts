@@ -8,11 +8,24 @@
 import type {
   AgentResponse,
   DashboardData,
+  Memory,
+  MemoryListResponse,
+  MemorySearchResponse,
+  MemoryStats,
+  MemoryUpdate,
+  ProjectAnalysis,
+  SystemCpu,
+  SystemDisk,
+  SystemHealth,
+  SystemMemory,
   SystemOverview,
+  SystemProcesses,
   TaskDetail,
   TaskListResponse,
   TimelineResponse,
   ToolListResponse,
+  ToolRecentResponse,
+  ToolSchema,
 } from './types'
 
 const BASE = '/api'
@@ -61,23 +74,50 @@ export interface ListParams {
   mode?: string
 }
 
+export interface SystemResponse<T> {
+  ok: boolean
+  output?: string
+  data?: T
+  error?: string
+}
+
 export const api = {
   // ── Dashboard / system ────────────────────────────────────────────────
   dashboard(): Promise<DashboardData> {
     return request<DashboardData>('/dashboard')
   },
 
-  systemOverview(): Promise<{ ok: boolean; output?: string; data?: SystemOverview }> {
+  systemOverview(): Promise<SystemResponse<SystemOverview>> {
     return request('/system/overview')
   },
 
-  systemHealth(): Promise<{ ok: boolean; output?: string; data?: { issues: string[]; ok: boolean } }> {
+  systemCpu(): Promise<SystemResponse<SystemCpu>> {
+    return request('/system/cpu')
+  },
+
+  systemMemory(): Promise<SystemResponse<SystemMemory>> {
+    return request('/system/memory')
+  },
+
+  systemDisk(): Promise<SystemResponse<SystemDisk>> {
+    return request('/system/disk')
+  },
+
+  systemHealth(): Promise<SystemResponse<SystemHealth>> {
     return request('/system/health')
+  },
+
+  systemProcesses(
+    count: number = 12,
+    sortBy: 'cpu' | 'memory' = 'cpu',
+  ): Promise<SystemResponse<SystemProcesses>> {
+    return request(`/system/processes?count=${count}&sort_by=${sortBy}`)
   },
 
   info(): Promise<{
     version: string
     tools: string[]
+    sandbox_roots: string[]
     model: { base_model: string; ollama_url: string }
   }> {
     return request('/info')
@@ -128,5 +168,84 @@ export const api = {
   // ── Tools ─────────────────────────────────────────────────────────────
   listTools(): Promise<ToolListResponse> {
     return request<ToolListResponse>('/tools')
+  },
+
+  getTool(name: string): Promise<ToolSchema> {
+    return request<ToolSchema>(`/tools/${encodeURIComponent(name)}`)
+  },
+
+  recentToolInvocations(name: string, limit: number = 20): Promise<ToolRecentResponse> {
+    return request<ToolRecentResponse>(
+      `/tools/${encodeURIComponent(name)}/recent?limit=${limit}`,
+    )
+  },
+
+  // ── Memory ────────────────────────────────────────────────────────────
+  listMemories(params?: {
+    limit?: number
+    offset?: number
+    category?: string
+    tags?: string
+    min_importance?: number
+    include_decayed?: boolean
+  }): Promise<MemoryListResponse> {
+    const q = new URLSearchParams()
+    if (params?.limit != null) q.set('limit', String(params.limit))
+    if (params?.offset != null) q.set('offset', String(params.offset))
+    if (params?.category) q.set('category', params.category)
+    if (params?.tags) q.set('tags', params.tags)
+    if (params?.min_importance != null)
+      q.set('min_importance', String(params.min_importance))
+    if (params?.include_decayed) q.set('include_decayed', 'true')
+    const qs = q.toString()
+    return request<MemoryListResponse>(`/memory${qs ? `?${qs}` : ''}`)
+  },
+
+  searchMemories(query: string, params?: {
+    category?: string
+    tags?: string
+    limit?: number
+  }): Promise<MemorySearchResponse> {
+    const q = new URLSearchParams()
+    q.set('q', query)
+    if (params?.category) q.set('category', params.category)
+    if (params?.tags) q.set('tags', params.tags)
+    if (params?.limit != null) q.set('limit', String(params.limit))
+    return request<MemorySearchResponse>(`/memory/search?${q.toString()}`)
+  },
+
+  memoryStats(): Promise<MemoryStats> {
+    return request<MemoryStats>('/memory/stats')
+  },
+
+  getMemory(publicId: string): Promise<Memory> {
+    return request<Memory>(`/memory/${publicId}`)
+  },
+
+  updateMemory(publicId: string, patch: MemoryUpdate): Promise<Memory> {
+    return request<Memory>(`/memory/${publicId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(patch),
+    })
+  },
+
+  deleteMemory(publicId: string): Promise<{ status: string; public_id: string }> {
+    return request(`/memory/${publicId}`, { method: 'DELETE' })
+  },
+
+  // ── Projects ──────────────────────────────────────────────────────────
+  analyzeProject(req: {
+    path: string
+    max_depth?: number
+    include_hidden?: boolean
+  }): Promise<ProjectAnalysis> {
+    return request<ProjectAnalysis>('/projects/analyze', {
+      method: 'POST',
+      body: JSON.stringify({
+        path: req.path,
+        max_depth: req.max_depth ?? 5,
+        include_hidden: req.include_hidden ?? false,
+      }),
+    })
   },
 }

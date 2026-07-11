@@ -139,9 +139,45 @@ export interface ToolInfo {
   permission: 'FREE' | 'CONFIRM' | 'RESTRICTED'
 }
 
+export interface ToolParameterSchema {
+  type?: string
+  description?: string
+  enum?: string[]
+  default?: unknown
+  anyOf?: Array<{ type: string }>
+  [k: string]: unknown
+}
+
+export interface ToolSchema {
+  name: string
+  description: string
+  permission: 'FREE' | 'CONFIRM' | 'RESTRICTED'
+  parameters: {
+    type: string
+    properties?: Record<string, ToolParameterSchema>
+    required?: string[]
+    [k: string]: unknown
+  }
+}
+
 export interface ToolListResponse {
-  tools: Record<string, unknown>[]
+  tools: ToolSchema[]
   count: number
+}
+
+export interface ToolInvocation {
+  timestamp: string
+  task_public_id: string | null
+  permission: string
+  inputs: Record<string, unknown>
+  ok: boolean
+  duration_ms: number
+  error: string | null
+}
+
+export interface ToolRecentResponse {
+  tool: string
+  invocations: ToolInvocation[]
 }
 
 // ── WebSocket ───────────────────────────────────────────────────────────
@@ -247,4 +283,141 @@ export function eventMeta(type: string): EventMeta {
       glyph: '·',
     }
   )
+}
+
+// ── Memory ─────────────────────────────────────────────────────────────
+
+export type MemoryCategory = 'user' | 'project' | 'history' | 'skill'
+
+export interface Memory {
+  public_id: string
+  category: MemoryCategory | string
+  content: string
+  importance: number
+  tags: string
+  created_at: string | null
+  updated_at: string | null
+  last_recalled_at: string | null
+  recall_count: number
+  usefulness_score: number
+  reliability_score: number
+  success_frequency: number
+  decayed: boolean
+  source_task: string | null
+}
+
+export interface MemoryListResponse {
+  memories: Memory[]
+  count: number
+  total: number
+  offset: number
+  limit: number
+}
+
+export interface MemorySearchResponse {
+  query: string
+  memories: Memory[]
+  count: number
+}
+
+export interface MemoryStats {
+  total: number
+  by_category: Record<string, number>
+  by_importance: { low: number; medium: number; high: number }
+  decayed: number
+  total_recalls: number
+}
+
+export interface MemoryUpdate {
+  content?: string
+  importance?: number
+  tags?: string
+}
+
+// ── System (extended) ──────────────────────────────────────────────────
+
+export interface SystemCpu {
+  cpu_percent_overall: number
+  per_cpu: number[]
+  cores_logical: number
+  cores_physical: number
+  freq_mhz_current: number | null
+  freq_mhz_max: number | null
+  load_avg: number[] | null
+}
+
+export interface SystemMemory {
+  total: number
+  available: number
+  used: number
+  free: number
+  percent: number
+  swap_total: number
+  swap_used: number
+  swap_percent: number
+}
+
+export interface DiskPartition {
+  device: string
+  mountpoint: string
+  fstype: string
+  total: number
+  used: number
+  free: number
+  percent: number
+}
+
+export interface SystemDisk {
+  partitions: DiskPartition[]
+}
+
+export interface SystemHealth {
+  issues: string[]
+  ok: boolean
+}
+
+export interface SystemProcess {
+  pid: number
+  name: string
+  username: string | null
+  cpu_percent: number
+  memory_percent: number
+}
+
+export interface SystemProcesses {
+  processes: SystemProcess[]
+  sort_by: string
+}
+
+// ── Project analysis ───────────────────────────────────────────────────
+
+export interface ProjectTechnology {
+  name: string
+  confidence: number
+  evidence: string[]
+}
+
+export interface ProjectIssue {
+  severity: 'low' | 'medium' | 'high' | 'info' | string
+  category: string
+  message: string
+}
+
+export interface ProjectTreeNode {
+  name: string
+  type: 'dir' | 'file'
+  size?: number
+  children?: ProjectTreeNode[]
+}
+
+export interface ProjectAnalysis {
+  root: string
+  summary: string
+  file_count: number
+  total_size_bytes: number
+  technologies: ProjectTechnology[]
+  issues: ProjectIssue[]
+  recommendations: string[]
+  dependencies: Record<string, string[]>
+  structure: ProjectTreeNode
 }

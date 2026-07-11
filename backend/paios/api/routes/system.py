@@ -1,15 +1,16 @@
 """System API routes.
 
-  GET /api/system/overview  — snapshot of CPU/RAM/disk
+  GET /api/system/overview    — snapshot of CPU/RAM/disk
   GET /api/system/cpu
   GET /api/system/memory
   GET /api/system/disk
   GET /api/system/health
+  GET /api/system/processes   — top-N processes by cpu or memory
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from paios.tools.system_monitor import SystemMonitorTool
 from paios.tools.base import ToolContext
@@ -48,3 +49,12 @@ async def disk() -> dict:
 @router.get("/health")
 async def health() -> dict:
     return await _run("health")
+
+
+@router.get("/processes")
+async def processes(
+    count: int = Query(default=12, ge=1, le=100),
+    sort_by: str = Query(default="cpu", pattern="^(cpu|memory)$"),
+) -> dict:
+    """Top-N processes by cpu or memory usage."""
+    return await _run("processes", process_count=count, sort_processes_by=sort_by)

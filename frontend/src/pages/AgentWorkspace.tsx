@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
-import type { TaskBrief } from '../api/types'
+import type { TaskBrief, WsEvent } from '../api/types'
 import { useAppStore } from '../stores/appStore'
 import { getWsClient } from '../api/websocket'
 import {
@@ -12,6 +12,10 @@ import {
   Button,
 } from '../components/ui'
 import { LiveTimeline } from '../components/timeline/LiveTimeline'
+import { ToolCallCard } from '../components/agent/ToolCallCard'
+import { PlanProgress } from '../components/agent/PlanProgress'
+import { MemoryIndicator } from '../components/agent/MemoryIndicator'
+import { extractToolCalls } from '../lib/execution'
 import { fmtRelative, isActiveStatus, isTerminalStatus, shortId } from '../lib/format'
 
 const EXAMPLE_GOALS = [
@@ -177,7 +181,7 @@ function ExecutionView({
   onOpenDetail,
 }: {
   task: TaskBrief
-  events: ReturnType<typeof useAppStore.getState>['events']
+  events: WsEvent[]
   onOpenDetail: () => void
 }) {
   const active = isActiveStatus(task.status)
@@ -185,6 +189,12 @@ function ExecutionView({
   const pct = task.progress?.percent ?? 0
   const hasResult = !!task.result
   const hasError = !!task.error
+
+  const toolCalls = useMemo(() => extractToolCalls(events), [events])
+  const hasPlanEvents = useMemo(
+    () => events.some((e) => e.type.startsWith('plan.')),
+    [events],
+  )
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -204,12 +214,15 @@ function ExecutionView({
           </div>
           <p className="mt-1.5 truncate text-sm text-gray-200">{task.request}</p>
         </div>
-        <button
-          onClick={onOpenDetail}
-          className="focus-ring shrink-0 rounded-md border border-ink-700/60 px-2.5 py-1 text-[11px] text-ink-300 hover:bg-ink-800/60"
-        >
-          Open detail →
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <MemoryIndicator active={active} />
+          <button
+            onClick={onOpenDetail}
+            className="focus-ring rounded-md border border-ink-700/60 px-2.5 py-1 text-[11px] text-ink-300 hover:bg-ink-800/60"
+          >
+            Open detail →
+          </button>
+        </div>
       </div>
 
       {/* progress */}
@@ -222,6 +235,32 @@ function ExecutionView({
           active={active}
         />
       </div>
+
+      {/* Plan execution panel (only when plan events exist) */}
+      {hasPlanEvents ? (
+        <div className="border-b border-ink-800/70 py-3">
+          <PlanProgress events={events} />
+        </div>
+      ) : null}
+
+      {/* Tool execution cards */}
+      {toolCalls.length > 0 ? (
+        <div className="border-b border-ink-800/70 py-3">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="hud-label">Tool Executions</span>
+            <span className="data-mono text-[10px] text-ink-500">
+              {toolCalls.length} call{toolCalls.length === 1 ? '' : 's'} ·{' '}
+              {toolCalls.filter((c) => c.result?.ok).length} ok ·{' '}
+              {toolCalls.filter((c) => c.result && !c.result.ok).length} fail
+            </span>
+          </div>
+          <div className="flex max-h-64 flex-col gap-2 overflow-y-auto pr-1">
+            {toolCalls.map((c) => (
+              <ToolCallCard key={c.key} call={c} />
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {/* result or error */}
       {hasResult || hasError ? (
