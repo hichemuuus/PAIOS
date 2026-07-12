@@ -23,12 +23,12 @@ export function ProgressMeter({
 }: ProgressMeterProps) {
   const pct = Math.max(0, Math.min(100, percent ?? 0))
   const indeterminate = active && pct === 0
-  const barColor = failed > 0 ? 'bg-warn-500' : active ? 'bg-sig-400' : 'bg-ok-500'
+  const barColor = failed > 0 ? 'bg-warn-500' : active ? 'bg-sig-500' : 'bg-ok-500'
 
   return (
     <div className="w-full">
       <div
-        className={`relative h-1.5 w-full overflow-hidden rounded-full bg-ink-700/70 ${
+        className={`relative h-1.5 w-full overflow-hidden rounded-full bg-ink-200 ${
           indeterminate ? 'scanbar' : ''
         }`}
       >
@@ -40,11 +40,11 @@ export function ProgressMeter({
         )}
       </div>
       {!compact && (
-        <div className="mt-1 flex items-center justify-between text-[11px] text-ink-400 data-mono">
+        <div className="mt-1.5 flex items-center justify-between text-[11px] text-ink-500 data-mono">
           <span>
             {completed != null && total != null ? `${completed}/${total} steps` : ''}
           </span>
-          <span className={active ? 'text-sig-300' : ''}>
+          <span className={active ? 'text-sig-600' : ''}>
             {fmtPct(pct)}
             {failed > 0 ? ` · ${failed} failed` : ''}
           </span>

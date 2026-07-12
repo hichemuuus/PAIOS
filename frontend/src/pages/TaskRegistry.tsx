@@ -37,24 +37,24 @@ export function TaskRegistryPage() {
   const counts = useMemoCounts(tasks)
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6">
+    <div className="mx-auto max-w-6xl px-8 py-8 page-enter">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">Task Registry</h1>
-          <p className="mt-0.5 text-xs text-ink-400">
-            Full history of missions dispatched to the runtime.
+          <h1 className="font-display text-display-sm font-semibold text-ink-900">Tasks</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Everything you've asked me to do.
           </p>
         </div>
         <button
           onClick={reload}
-          className="focus-ring rounded-md border border-ink-700/60 px-3 py-1.5 text-xs text-ink-300 hover:bg-ink-800/60"
+          className="focus-ring rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-50"
         >
           ↻ Refresh
         </button>
       </header>
 
       {/* status summary strip */}
-      <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
+      <section className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
         {TASK_STATUS_VALUES.map((s) => (
           <FilterChip
             key={s}
@@ -69,13 +69,13 @@ export function TaskRegistryPage() {
 
       {/* filters */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <div className="flex items-center gap-1 rounded-md border border-ink-700/60 bg-ink-900/40 p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-ink-200 bg-white p-0.5">
           {(['all', 'react', 'plan'] as ModeFilter[]).map((m) => (
             <button
               key={m}
               onClick={() => setModeFilter(m)}
-              className={`focus-ring rounded px-2.5 py-1 font-mono text-[11px] uppercase ${
-                modeFilter === m ? 'bg-sig-500/15 text-sig-200' : 'text-ink-400 hover:text-gray-200'
+              className={`focus-ring rounded-md px-2.5 py-1 text-[11px] font-medium uppercase transition-colors ${
+                modeFilter === m ? 'bg-sig-500/15 text-sig-700' : 'text-ink-500 hover:text-ink-800'
               }`}
             >
               {m}
@@ -85,31 +85,31 @@ export function TaskRegistryPage() {
         {statusFilter !== 'all' ? (
           <button
             onClick={() => setStatusFilter('all')}
-            className="focus-ring rounded-md border border-ink-700/60 px-2 py-1 text-[11px] text-ink-300 hover:bg-ink-800/60"
+            className="focus-ring rounded-lg border border-ink-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-ink-600 transition-colors hover:bg-ink-50"
           >
-            Clear status filter: {statusInfo(statusFilter).label} ×
+            Clear: {statusInfo(statusFilter).label} ×
           </button>
         ) : null}
-        <span className="ml-auto font-mono text-[10px] text-ink-500">{tasks.length} shown</span>
+        <span className="ml-auto font-mono text-[10px] text-ink-400">{tasks.length} shown</span>
       </div>
 
-      <section className="mt-4">
+      <section className="mt-5">
         {error ? (
           <ErrorBox message={error} onRetry={reload} />
         ) : loading && tasks.length === 0 ? (
           <div className="panel">
-            <LoadingSpinner label="Loading registry" />
+            <LoadingSpinner label="Loading tasks" />
           </div>
         ) : tasks.length === 0 ? (
           <div className="panel">
             <EmptyState
-              icon="◎"
+              icon="✦"
               title="No tasks match"
-              hint="Try a different status or mode filter, or dispatch a new mission."
+              hint="Try a different status or mode filter, or start something new."
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
             {tasks.map((t) => (
               <TaskRow key={t.public_id} task={t} />
             ))}
@@ -134,21 +134,23 @@ function FilterChip({
   onClick: () => void
 }) {
   const toneText: Record<string, string> = {
-    active: 'text-sig-300',
-    ok: 'text-ok-400',
-    warn: 'text-warn-400',
-    fail: 'text-bad-400',
-    idle: 'text-ink-300',
+    active: 'text-sig-600',
+    ok: 'text-ok-600',
+    warn: 'text-warn-600',
+    fail: 'text-bad-600',
+    idle: 'text-ink-600',
   }
   return (
     <button
       onClick={onClick}
-      className={`focus-ring panel flex flex-col items-start gap-0.5 p-2 text-left transition-colors ${
-        active ? 'border-sig-400/40 bg-sig-500/10 shadow-glow' : 'hover:border-ink-600/80'
+      className={`focus-ring flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all ${
+        active
+          ? 'border-sig-500/40 bg-sig-50 shadow-soft'
+          : 'border-ink-200/70 bg-white hover:border-ink-300 hover:bg-ink-50/50'
       }`}
     >
       <span className="hud-label">{label}</span>
-      <span className={`data-mono text-lg font-semibold ${toneText[tone] ?? 'text-gray-100'}`}>
+      <span className={`font-display text-2xl font-semibold tracking-tight ${toneText[tone] ?? 'text-ink-900'}`}>
         {count}
       </span>
     </button>

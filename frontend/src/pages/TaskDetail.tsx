@@ -69,14 +69,14 @@ export function TaskDetailPage() {
 
   if (taskQ.error) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-8 py-10">
         <ErrorBox message={taskQ.error} onRetry={taskQ.reload} />
       </div>
     )
   }
   if (taskQ.loading && !task) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-8 py-10">
         <div className="panel">
           <LoadingSpinner label={`Loading task ${shortId(publicId)}`} />
         </div>
@@ -85,7 +85,7 @@ export function TaskDetailPage() {
   }
   if (!task) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-8 py-10">
         <div className="panel">
           <EmptyState icon="?" title="Task not found" hint={`No task with id ${publicId}`} />
         </div>
@@ -98,31 +98,31 @@ export function TaskDetailPage() {
   const progress = task.progress
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6">
+    <div className="mx-auto max-w-6xl px-8 py-8 page-enter">
       {/* breadcrumb + header */}
-      <div className="flex items-center gap-2 font-mono text-[11px] text-ink-500">
-        <Link to="/tasks" className="hover:text-ink-300">Registry</Link>
+      <div className="flex items-center gap-2 text-[11px] text-ink-400">
+        <Link to="/tasks" className="hover:text-ink-600">Tasks</Link>
         <span>/</span>
-        <span className="text-ink-400">#{shortId(publicId)}</span>
+        <span className="text-ink-500">#{shortId(publicId)}</span>
       </div>
 
-      <header className="mt-2 flex flex-wrap items-start justify-between gap-4">
+      <header className="mt-3 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <StatusBadge status={task.status} pulse={active} size="md" />
             <span
-              className={`rounded border px-1 py-px font-mono text-[9px] uppercase ${
+              className={`rounded-full border px-2 py-px font-mono text-[9px] font-medium uppercase ${
                 task.mode === 'plan'
-                  ? 'text-violet-400 border-violet-500/30'
-                  : 'text-sig-400 border-sig-400/30'
+                  ? 'text-violet-600 border-violet-500/30 bg-violet-500/8'
+                  : 'text-sig-600 border-sig-500/30 bg-sig-50'
               }`}
             >
               {task.mode}
             </span>
-            <span className="data-mono text-[11px] text-ink-500">{publicId}</span>
+            <span className="data-mono text-[11px] text-ink-400">{publicId}</span>
           </div>
-          <h1 className="mt-2 text-base font-semibold text-gray-100">{task.request}</h1>
-          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] text-ink-500">
+          <h1 className="mt-3 font-display text-xl font-medium leading-snug text-ink-900">{task.request}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] text-ink-400">
             <span>created {fmtRelative(task.created_at)}</span>
             {task.started_at ? <span>started {fmtClock(task.started_at)}</span> : null}
             {task.finished_at ? <span>finished {fmtClock(task.finished_at)}</span> : null}
@@ -153,7 +153,7 @@ export function TaskDetailPage() {
       </header>
 
       {/* summary stats */}
-      <section className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
         <Stat label="Status" value={info.label} tone={info.tone === 'idle' ? 'default' : info.tone} />
         <Stat
           label="Progress"
@@ -180,7 +180,7 @@ export function TaskDetailPage() {
       </section>
 
       {/* progress bar */}
-      <div className="panel mt-3 p-3">
+      <div className="panel mt-4 p-4">
         <ProgressMeter
           percent={progress?.percent ?? 0}
           completed={progress?.completed_steps}
@@ -192,24 +192,24 @@ export function TaskDetailPage() {
 
       {/* result / error */}
       {task.result ? (
-        <ResultBlock tone="ok" label="Verified Result" text={task.result} />
+        <ResultBlock tone="ok" label="Result" text={task.result} />
       ) : null}
       {task.error ? (
-        <ResultBlock tone="fail" label="Execution Error" text={task.error} />
+        <ResultBlock tone="fail" label="Error" text={task.error} />
       ) : null}
 
       {/* tabs: live stream / execution steps */}
-      <section className="panel mt-3 flex min-h-[20rem] flex-col p-4">
-        <div className="mb-3 flex items-center gap-1 border-b border-ink-800/70 pb-2">
+      <section className="panel mt-4 flex min-h-[20rem] flex-col p-5">
+        <div className="mb-4 flex items-center gap-1 border-b border-ink-200/70 pb-2">
           <TabButton active={tab === 'stream'} onClick={() => setTab('stream')}>
-            Live Stream
+            Live stream
             {active ? (
-              <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-sig-400 animate-pulseDot" />
+              <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-sig-500 animate-pulseDot" />
             ) : null}
           </TabButton>
           <TabButton active={tab === 'steps'} onClick={() => setTab('steps')}>
-            Execution Steps
-            <span className="ml-1.5 data-mono text-[10px] text-ink-500">{steps.length}</span>
+            Execution steps
+            <span className="ml-1.5 data-mono text-[10px] text-ink-400">{steps.length}</span>
           </TabButton>
         </div>
 
@@ -218,7 +218,7 @@ export function TaskDetailPage() {
             <LiveTimeline
               events={taskEvents}
               live={active}
-              emptyHint={active ? 'Establishing telemetry…' : 'No live events captured'}
+              emptyHint={active ? 'Starting…' : 'No events captured'}
               maxHeight="22rem"
             />
           </div>
@@ -237,11 +237,11 @@ function ResultBlock({ tone, label, text }: { tone: 'ok' | 'fail'; label: string
     tone === 'ok'
       ? 'border-ok-500/30 bg-ok-500/5'
       : 'border-bad-500/30 bg-bad-500/5'
-  const labelCls = tone === 'ok' ? 'text-ok-400' : 'text-bad-400'
+  const labelCls = tone === 'ok' ? 'text-ok-600' : 'text-bad-600'
   return (
-    <div className={`panel mt-3 p-4 ${cls}`}>
+    <div className={`panel mt-4 p-5 ${cls}`}>
       <div className={`hud-label ${labelCls}`}>{label}</div>
-      <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-words font-mono text-xs text-gray-200">
+      <pre className="mt-2.5 max-h-72 overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-ink-700">
         {text}
       </pre>
     </div>
@@ -260,10 +260,10 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`focus-ring -mb-[9px] flex items-center border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
+      className={`focus-ring -mb-[9px] flex items-center border-b-2 px-3.5 py-2 text-xs font-medium transition-colors ${
         active
-          ? 'border-sig-400 text-sig-200'
-          : 'border-transparent text-ink-400 hover:text-gray-200'
+          ? 'border-sig-500 text-sig-700'
+          : 'border-transparent text-ink-400 hover:text-ink-700'
       }`}
     >
       {children}
@@ -272,11 +272,11 @@ function TabButton({
 }
 
 const STEP_TONE: Record<string, string> = {
-  completed: 'text-ok-400',
-  running: 'text-sig-300',
-  failed: 'text-bad-400',
-  pending: 'text-ink-400',
-  skipped: 'text-ink-500',
+  completed: 'text-ok-600',
+  running: 'text-sig-600',
+  failed: 'text-bad-600',
+  pending: 'text-ink-500',
+  skipped: 'text-ink-400',
 }
 
 const STEP_GLYPH: Record<string, string> = {
@@ -292,9 +292,9 @@ function StepsTable({ steps, loading }: { steps: ExecutionStep[]; loading: boole
   if (steps.length === 0) {
     return (
       <EmptyState
-        icon="▦"
+        icon="✦"
         title="No execution steps recorded"
-        hint="Steps are written by the tracker as the agent iterates."
+        hint="Steps are written as I work through the task."
       />
     )
   }
@@ -302,37 +302,37 @@ function StepsTable({ steps, loading }: { steps: ExecutionStep[]; loading: boole
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="hud-label border-b border-ink-800/70">
-            <th className="py-2 pr-3 font-medium">#</th>
-            <th className="py-2 pr-3 font-medium">Type</th>
-            <th className="py-2 pr-3 font-medium">Name</th>
-            <th className="py-2 pr-3 font-medium">Status</th>
-            <th className="py-2 pr-3 text-right font-medium">Duration</th>
-            <th className="py-2 pr-3 font-medium">Started</th>
+          <tr className="hud-label border-b border-ink-200/70">
+            <th className="py-2.5 pr-3 font-semibold">#</th>
+            <th className="py-2.5 pr-3 font-semibold">Type</th>
+            <th className="py-2.5 pr-3 font-semibold">Name</th>
+            <th className="py-2.5 pr-3 font-semibold">Status</th>
+            <th className="py-2.5 pr-3 text-right font-semibold">Duration</th>
+            <th className="py-2.5 pr-3 font-semibold">Started</th>
           </tr>
         </thead>
         <tbody>
           {steps.map((s, i) => (
-            <tr key={`${s.id ?? i}-${s.step_index}`} className="border-b border-ink-800/40 text-xs">
-              <td className="py-2 pr-3 data-mono text-ink-500">{s.step_index}</td>
-              <td className="py-2 pr-3">
-                <span className="rounded border border-ink-700/60 px-1.5 py-px font-mono text-[10px] text-ink-300">
+            <tr key={`${s.id ?? i}-${s.step_index}`} className="border-b border-ink-100 text-xs transition-colors hover:bg-ink-50/50">
+              <td className="py-2.5 pr-3 data-mono text-ink-400">{s.step_index}</td>
+              <td className="py-2.5 pr-3">
+                <span className="rounded-md border border-ink-200 bg-ink-50 px-1.5 py-px font-mono text-[10px] text-ink-600">
                   {stepTypeLabel(s.step_type)}
                 </span>
               </td>
-              <td className="py-2 pr-3 font-mono text-ink-200">
+              <td className="py-2.5 pr-3 font-mono text-ink-700">
                 {s.name}
                 {s.error ? (
-                  <span className="mt-0.5 block truncate text-[10px] text-bad-400/80" title={s.error}>
+                  <span className="mt-0.5 block truncate text-[10px] text-bad-600/80" title={s.error}>
                     {s.error}
                   </span>
                 ) : null}
               </td>
-              <td className={`py-2 pr-3 data-mono ${STEP_TONE[s.status] ?? 'text-ink-300'}`}>
+              <td className={`py-2.5 pr-3 data-mono font-medium ${STEP_TONE[s.status] ?? 'text-ink-600'}`}>
                 {STEP_GLYPH[s.status] ?? '·'} {s.status}
               </td>
-              <td className="py-2 pr-3 text-right data-mono text-ink-400">{fmtMs(s.duration_ms)}</td>
-              <td className="py-2 pr-3 data-mono text-ink-500">{fmtClock(s.started_at)}</td>
+              <td className="py-2.5 pr-3 text-right data-mono text-ink-500">{fmtMs(s.duration_ms)}</td>
+              <td className="py-2.5 pr-3 data-mono text-ink-400">{fmtClock(s.started_at)}</td>
             </tr>
           ))}
         </tbody>
@@ -383,7 +383,7 @@ function useTaskControls(
     busy,
     pause: () => run(() => api.pauseTask(publicId), 'Task paused', 'Pause failed'),
     resume: () => run(() => api.resumeTask(publicId), 'Task resumed', 'Resume failed'),
-    cancel: () => run(() => api.cancelTask(publicId), 'Task cancelled', 'Cancel failed'),
+    cancel: () => run(() => api.cancelTask(publicId), 'Task canceled', 'Cancel failed'),
     remove: () =>
       run(
         async () => {

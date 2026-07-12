@@ -4,11 +4,11 @@ import { eventMeta } from '../../api/types'
 import { fmtClock } from '../../lib/format'
 
 const TONE_NODE: Record<string, string> = {
-  ok: 'border-ok-500/60 bg-ok-500/15 text-ok-400',
-  active: 'border-sig-400/60 bg-sig-500/15 text-sig-300',
-  warn: 'border-warn-500/60 bg-warn-500/15 text-warn-400',
-  fail: 'border-bad-500/60 bg-bad-500/15 text-bad-400',
-  info: 'border-ink-500/60 bg-ink-700/40 text-ink-300',
+  ok: 'border-ok-500/40 bg-ok-500/10 text-ok-600',
+  active: 'border-sig-500/40 bg-sig-500/10 text-sig-600',
+  warn: 'border-warn-500/40 bg-warn-500/10 text-warn-600',
+  fail: 'border-bad-500/40 bg-bad-500/10 text-bad-600',
+  info: 'border-ink-300 bg-ink-100 text-ink-500',
 }
 
 // Events that carry no user-facing action and would only add noise as a
@@ -30,7 +30,7 @@ interface LiveTimelineProps {
 }
 
 /**
- * Vertical, monospace execution timeline. Each WS event becomes a node with a
+ * Vertical execution timeline. Each WS event becomes a node with a
  * category-coded marker, timestamp, label, and a compact payload summary.
  *
  * No private chain-of-thought is shown: `agent.thinking` deltas are suppressed
@@ -40,7 +40,7 @@ interface LiveTimelineProps {
 export function LiveTimeline({
   events,
   live = false,
-  emptyHint = 'Awaiting telemetry…',
+  emptyHint = 'Waiting…',
   maxHeight = '100%',
 }: LiveTimelineProps) {
   const { nodes, iterationCount, thinkingPulse } = useMemo(() => {
@@ -70,11 +70,11 @@ export function LiveTimeline({
 
   if (nodes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
         <div
-          className={`h-2 w-2 rounded-full ${live ? 'bg-sig-400 animate-pulseDot' : 'bg-ink-600'}`}
+          className={`h-2.5 w-2.5 rounded-full ${live ? 'bg-sig-500 animate-pulseDot' : 'bg-ink-300'}`}
         />
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500">
+        <p className="hud-label">
           {emptyHint}
         </p>
       </div>
@@ -84,19 +84,19 @@ export function LiveTimeline({
   return (
     <div className="flex flex-col" style={{ maxHeight }}>
       {(live || iterationCount > 0) && (
-        <div className="mb-3 flex items-center justify-between rounded-md border border-ink-800/70 bg-ink-900/40 px-3 py-1.5">
+        <div className="mb-4 flex items-center justify-between rounded-lg border border-ink-200/70 bg-ink-50/60 px-3 py-1.5">
           <div className="flex items-center gap-2">
             <span
               className={`h-1.5 w-1.5 rounded-full ${
-                thinkingPulse ? 'bg-sig-400 animate-pulseDot' : 'bg-ink-600'
+                thinkingPulse ? 'bg-sig-500 animate-pulseDot' : 'bg-ink-300'
               }`}
             />
             <span className="hud-label">
-              {thinkingPulse ? 'EXECUTING' : iterationCount > 0 ? 'IDLE' : 'STREAM'}
+              {thinkingPulse ? 'Working' : iterationCount > 0 ? 'Idle' : 'Stream'}
             </span>
           </div>
           {iterationCount > 0 ? (
-            <span className="data-mono text-[11px] text-ink-300">
+            <span className="data-mono text-[11px] text-ink-500">
               {iterationCount} iter
             </span>
           ) : null}
@@ -106,7 +106,7 @@ export function LiveTimeline({
       <div className="relative overflow-y-auto pr-1" style={{ maxHeight }}>
         <ol className="relative">
           {/* spine */}
-          <div className="absolute bottom-2 left-[11px] top-2 w-px bg-gradient-to-b from-ink-700/80 via-ink-700/40 to-transparent" />
+          <div className="absolute bottom-2 left-[11px] top-2 w-px bg-gradient-to-b from-ink-300/80 via-ink-200/60 to-transparent" />
           {nodes.map((n, i) => (
             <TimelineRow key={n.key} node={n} isLast={i === nodes.length - 1} />
           ))}
@@ -124,19 +124,19 @@ function TimelineRow({ node, isLast }: { node: TimelineNode; isLast: boolean }) 
   return (
     <li className={`relative pl-8 ${isLast ? 'pb-1' : 'pb-4'}`}>
       <div
-        className={`absolute left-0 top-0.5 flex h-6 w-6 items-center justify-center rounded-md border font-mono text-[11px] ${nodeCls}`}
+        className={`absolute left-0 top-0.5 flex h-6 w-6 items-center justify-center rounded-lg border font-mono text-[11px] ${nodeCls}`}
       >
         {meta.glyph}
       </div>
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-gray-200">{meta.label}</span>
-          <span className="data-mono text-[10px] text-ink-500">
+          <span className="text-xs font-medium text-ink-800">{meta.label}</span>
+          <span className="data-mono text-[10px] text-ink-400">
             {fmtClock(new Date(ev.ts * 1000).toISOString())}
           </span>
         </div>
         {summary ? (
-          <p className="mt-0.5 truncate font-mono text-[11px] text-ink-400">{summary}</p>
+          <p className="mt-0.5 truncate font-mono text-[11px] text-ink-500">{summary}</p>
         ) : null}
       </div>
     </li>

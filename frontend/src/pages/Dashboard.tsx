@@ -29,15 +29,19 @@ export function DashboardPage() {
   useInterval(reload, REFRESH_MS)
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6">
-      <PageHeader />
+    <div className="mx-auto max-w-6xl px-8 py-10 page-enter">
+      <Hero
+        loading={loading && !data}
+        active={data?.active_tasks ?? 0}
+        total={data?.total_tasks ?? 0}
+      />
       {error ? (
-        <div className="mt-6">
+        <div className="mt-8">
           <ErrorBox message={error} onRetry={reload} />
         </div>
       ) : null}
 
-      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <section className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat
           label="Active"
           value={loading && !data ? '—' : data?.active_tasks ?? 0}
@@ -58,14 +62,14 @@ export function DashboardPage() {
           icon={<Cross />}
         />
         <Stat
-          label="Throughput"
+          label="Success rate"
           value={loading && !data ? '—' : successRate(data)}
-          sub="success rate"
+          sub="of finished tasks"
           tone="default"
         />
       </section>
 
-      <section className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <section className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <RecentTasks
             loading={loading && !data}
@@ -79,21 +83,62 @@ export function DashboardPage() {
   )
 }
 
-function PageHeader() {
+// ── Hero / greeting ──────────────────────────────────────────────────────
+
+function Hero({ loading, active, total }: { loading: boolean; active: number; total: number }) {
+  const greeting = greetingForHour()
   return (
-    <div className="flex items-end justify-between">
-      <div>
-        <h1 className="text-lg font-semibold text-gray-100">Operations Console</h1>
-        <p className="mt-0.5 text-xs text-ink-400">
-          Real-time view of the autonomous agent runtime and host system.
+    <div className="flex items-start justify-between gap-6">
+      <div className="min-w-0">
+        <p className="hud-label text-ink-400">{greeting.eyebrow}</p>
+        <h1 className="mt-2 font-display text-display font-semibold text-ink-900">
+          {greeting.line}
+        </h1>
+        <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-ink-500">
+          {loading
+            ? 'Checking on your tasks…'
+            : active > 0
+            ? `You have ${active} task${active === 1 ? '' : 's'} in progress. I'll keep watch and verify each result.`
+            : total > 0
+            ? 'Everything is settled. Whenever you're ready, describe a new goal and I'll take it from here.'
+            : 'Nothing here yet. Describe a goal and I'll plan, act, and verify it for you.'}
         </p>
       </div>
-      <Link
-        to="/agent"
-        className="focus-ring rounded-md border border-sig-400/50 bg-sig-500/15 px-3 py-1.5 text-xs font-medium text-sig-200 shadow-glow hover:bg-sig-500/25"
-      >
-        Launch Agent →
-      </Link>
+      {/* Breathing AI-presence orb — a calm, living focal point. */}
+      <div className="hidden shrink-0 sm:block">
+        <PresenceOrb active={active > 0} />
+      </div>
+    </div>
+  )
+}
+
+function greetingForHour(): { eyebrow: string; line: string } {
+  const h = new Date().getHours()
+  if (h < 5) return { eyebrow: 'Late night', line: 'Still here.' }
+  if (h < 12) return { eyebrow: 'Good morning', line: "Let's make today clear." }
+  if (h < 17) return { eyebrow: 'Good afternoon', line: 'What can I take off your plate?' }
+  if (h < 21) return { eyebrow: 'Good evening', line: "Let's wind things down." }
+  return { eyebrow: 'Good night', line: "I'll keep an eye on things." }
+}
+
+function PresenceOrb({ active }: { active: boolean }) {
+  return (
+    <div className="relative flex h-20 w-20 items-center justify-center">
+      <span
+        className={`absolute inset-0 rounded-full ${
+          active ? 'bg-sig-400/20' : 'bg-ink-300/20'
+        } animate-breathe`}
+      />
+      <span
+        className={`absolute inset-2 rounded-full ${
+          active ? 'bg-sig-400/25' : 'bg-ink-300/25'
+        }`}
+      />
+      <span
+        className={`relative h-12 w-12 rounded-full bg-gradient-to-br from-sig-400 to-sig-600 shadow-card-lg ${
+          active ? 'animate-pulseDot' : ''
+        }`}
+      />
     </div>
   )
 }
@@ -115,37 +160,37 @@ function RecentTasks({
   onRefresh: () => void
 }) {
   return (
-    <div className="panel flex h-full flex-col p-4">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="panel flex h-full flex-col p-5">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="hud-label">Recent Activity</span>
-          <span className="data-mono text-[10px] text-ink-500">{tasks.length}</span>
+          <h2 className="font-display text-lg font-medium text-ink-900">Recent activity</h2>
+          <span className="data-mono text-[11px] text-ink-400">{tasks.length}</span>
         </div>
         <button
           onClick={onRefresh}
-          className="focus-ring rounded border border-ink-700/60 px-2 py-0.5 font-mono text-[10px] text-ink-400 hover:bg-ink-800/60"
+          className="focus-ring rounded-lg border border-ink-200 bg-white px-2.5 py-1 text-[11px] font-medium text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-700"
         >
-          ↻ refresh
+          ↻ Refresh
         </button>
       </div>
       {loading ? (
         <LoadingSpinner label="Loading tasks" />
       ) : tasks.length === 0 ? (
         <EmptyState
-          icon="◎"
+          icon="✦"
           title="No tasks yet"
-          hint="Submit a goal from the Agent Workspace to see execution here."
+          hint="Describe a goal from the Agent page to get started. I'll plan, act, and verify each step."
           action={
             <Link
               to="/agent"
-              className="focus-ring mt-2 rounded-md border border-sig-400/40 bg-sig-500/10 px-3 py-1.5 text-xs text-sig-200 hover:bg-sig-500/20"
+              className="focus-ring mt-1 rounded-lg bg-sig-500 px-4 py-2 text-xs font-medium text-white shadow-soft transition-all hover:bg-sig-600 active:scale-[0.97]"
             >
-              Open Workspace
+              Open Agent →
             </Link>
           }
         />
       ) : (
-        <div className="-mr-1 flex max-h-[26rem] flex-col gap-2 overflow-y-auto pr-1">
+        <div className="-mr-2 flex max-h-[28rem] flex-col gap-2 overflow-y-auto pr-2">
           {tasks.map((t) => (
             <TaskRow key={t.public_id} task={t} />
           ))}
@@ -192,9 +237,9 @@ function SystemPanel({
 
   const s = system
   return (
-    <div className="panel flex h-full flex-col p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <span className="hud-label">Host Telemetry</span>
+    <div className="panel flex h-full flex-col p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="font-display text-lg font-medium text-ink-900">System health</h2>
         <StatusBadge tone={healthTone(s)} label={healthLabel(s)} />
       </div>
       {loading && !s ? (
@@ -202,11 +247,11 @@ function SystemPanel({
       ) : s ? (
         <div className="flex flex-1 flex-col gap-3">
           <Metric
-            label="CPU"
+            label="Processor"
             value={fmtPct(latest(cpu, s.cpu_percent), 1)}
             tone={latest(cpu, s.cpu_percent) > 85 ? 'warn' : 'default'}
           >
-            <Sparkline values={cpu.length ? cpu : [s.cpu_percent]} color="#52e6ff" />
+            <Sparkline values={cpu.length ? cpu : [s.cpu_percent]} color="#C75D3A" />
           </Metric>
           <Metric
             label="Memory"
@@ -214,10 +259,10 @@ function SystemPanel({
             tone={latest(mem, s.memory_percent) > 90 ? 'warn' : 'default'}
             sub={`${fmtBytes(s.memory_used)} / ${fmtBytes(s.memory_total)}`}
           >
-            <Sparkline values={mem.length ? mem : [s.memory_percent]} color="#a98bff" />
+            <Sparkline values={mem.length ? mem : [s.memory_percent]} color="#715FA0" />
           </Metric>
           <Metric
-            label="Disk"
+            label="Storage"
             value={fmtPct(s.disk_percent, 1)}
             tone={s.disk_percent > 90 ? 'warn' : 'default'}
           >
@@ -225,13 +270,13 @@ function SystemPanel({
               <ProgressMeter percent={s.disk_percent} compact />
             </div>
           </Metric>
-          <div className="mt-auto grid grid-cols-2 gap-2 border-t border-ink-800/70 pt-3">
+          <div className="mt-auto grid grid-cols-2 gap-2 border-t border-ink-200/70 pt-3">
             <MiniStat label="Cores" value={s.cpu_count} />
             <MiniStat label="Uptime" value={uptime(s.boot_time)} />
           </div>
         </div>
       ) : (
-        <EmptyState title="No telemetry" hint="Host data unavailable." />
+        <EmptyState title="No data" hint="Host information unavailable." />
       )}
     </div>
   )
@@ -255,15 +300,15 @@ function Metric({
   children?: React.ReactNode
 }) {
   const toneCls =
-    tone === 'warn' ? 'text-warn-400' : tone === 'fail' ? 'text-bad-400' : 'text-gray-100'
+    tone === 'warn' ? 'text-warn-600' : tone === 'fail' ? 'text-bad-600' : 'text-ink-900'
   return (
-    <div className="rounded-lg border border-ink-800/60 bg-ink-900/40 p-2.5">
+    <div className="rounded-xl border border-ink-200/70 bg-ink-50/60 p-3">
       <div className="flex items-center justify-between">
         <span className="hud-label">{label}</span>
-        <span className={`data-mono text-sm font-semibold ${toneCls}`}>{value}</span>
+        <span className={`font-display text-base font-semibold ${toneCls}`}>{value}</span>
       </div>
-      {sub ? <div className="data-mono mt-0.5 text-[10px] text-ink-500">{sub}</div> : null}
-      {children ? <div className="mt-1.5">{children}</div> : null}
+      {sub ? <div className="data-mono mt-0.5 text-[10px] text-ink-400">{sub}</div> : null}
+      {children ? <div className="mt-2">{children}</div> : null}
     </div>
   )
 }
@@ -272,7 +317,7 @@ function MiniStat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
       <div className="hud-label">{label}</div>
-      <div className="data-mono text-sm text-gray-200">{value}</div>
+      <div className="data-mono mt-0.5 text-sm text-ink-700">{value}</div>
     </div>
   )
 }
@@ -284,7 +329,7 @@ function healthTone(s?: SystemOverview): 'ok' | 'warn' | 'fail' | 'idle' {
 }
 function healthLabel(s?: SystemOverview): string {
   if (!s) return 'Unknown'
-  return healthTone(s) === 'ok' ? 'Nominal' : 'Stressed'
+  return healthTone(s) === 'ok' ? 'Healthy' : 'Stressed'
 }
 
 function uptime(boot: number | undefined): string {
@@ -315,11 +360,11 @@ function toBrief(t: RecentTask): TaskBrief {
 
 // tiny inline icons
 function Pulse() {
-  return <span className="h-2 w-2 rounded-full bg-sig-400 animate-pulseDot" />
+  return <span className="h-2 w-2 rounded-full bg-sig-500 animate-pulseDot" />
 }
 function Check() {
-  return <span className="text-ok-400">✓</span>
+  return <span className="text-ok-500">✓</span>
 }
 function Cross() {
-  return <span className="text-bad-400">✕</span>
+  return <span className="text-bad-500">✕</span>
 }

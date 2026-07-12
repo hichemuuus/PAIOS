@@ -18,9 +18,9 @@ const PERMISSION_TONE: Record<string, 'ok' | 'warn' | 'fail'> = {
 }
 
 const PERMISSION_NOTE: Record<string, string> = {
-  FREE: 'Runs silently — no user approval needed.',
-  CONFIRM: 'Requires approval via WebSocket confirmation flow.',
-  RESTRICTED: 'Requires approval AND a documented reason.',
+  FREE: 'Runs on its own — no approval needed.',
+  CONFIRM: 'Needs your approval before running.',
+  RESTRICTED: 'Needs approval and a documented reason.',
 }
 
 export function ToolCenterPage() {
@@ -51,34 +51,34 @@ export function ToolCenterPage() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6">
+    <div className="mx-auto max-w-6xl px-8 py-8 page-enter">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">Tool Center</h1>
-          <p className="mt-0.5 text-xs text-ink-400">
-            Catalog of agent-callable tools — schemas, permission gates, and recent invocations.
+          <h1 className="font-display text-display-sm font-semibold text-ink-900">Tools</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Everything I can do — schemas, permission levels, and recent usage.
           </p>
         </div>
         <button
           onClick={load}
-          className="focus-ring rounded-md border border-ink-700/60 px-3 py-1.5 text-xs text-ink-300 hover:bg-ink-800/60"
+          className="focus-ring rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-50"
         >
           ↻ Refresh
         </button>
       </header>
 
       {error ? (
-        <div className="mt-4">
+        <div className="mt-5">
           <ErrorBox message={error} onRetry={load} />
         </div>
       ) : null}
 
-      <section className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <section className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Tool list */}
-        <div className="panel flex min-h-[24rem] flex-col p-3 lg:col-span-1">
-          <div className="mb-2 flex items-center justify-between px-1">
-            <span className="hud-label">Registered Tools</span>
-            <span className="data-mono text-[10px] text-ink-500">
+        <div className="panel flex min-h-[24rem] flex-col p-4 lg:col-span-1">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <span className="hud-label">Available tools</span>
+            <span className="data-mono text-[10px] text-ink-400">
               {tools ? tools.length : '—'}
             </span>
           </div>
@@ -86,7 +86,7 @@ export function ToolCenterPage() {
             <LoadingSpinner label="Loading tools" />
           ) : !tools || tools.length === 0 ? (
             <EmptyState
-              icon="⚙"
+              icon="✦"
               title="No tools registered"
               hint="The tool registry is empty. Check backend discovery."
             />
@@ -111,7 +111,7 @@ export function ToolCenterPage() {
           ) : (
             <div className="panel">
               <EmptyState
-                icon="◎"
+                icon="✦"
                 title="No tool selected"
                 hint="Pick a tool from the list to inspect its schema and recent activity."
               />
@@ -136,27 +136,27 @@ function ToolListItem({
   return (
     <button
       onClick={onClick}
-      className={`focus-ring group flex flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors ${
+      className={`focus-ring group flex flex-col gap-1.5 rounded-xl border px-3.5 py-3 text-left transition-all ${
         active
-          ? 'border-sig-400/40 bg-sig-500/10 shadow-glow'
-          : 'border-ink-700/60 bg-ink-900/40 hover:border-ink-600/80 hover:bg-ink-850/70'
+          ? 'border-sig-500/40 bg-sig-50 shadow-soft'
+          : 'border-ink-200 bg-white hover:border-ink-300 hover:bg-ink-50/50'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-xs font-medium text-gray-200">{tool.name}</span>
+        <span className="font-mono text-xs font-medium text-ink-800">{tool.name}</span>
         <span
-          className={`rounded border px-1 py-px font-mono text-[9px] uppercase tracking-wide ${
+          className={`rounded-full border px-1.5 py-px text-[9px] font-medium uppercase tracking-wide ${
             tone === 'ok'
-              ? 'border-ok-500/40 text-ok-400'
+              ? 'border-ok-500/30 text-ok-600 bg-ok-500/8'
               : tone === 'warn'
-              ? 'border-warn-500/40 text-warn-400'
-              : 'border-bad-500/40 text-bad-400'
+              ? 'border-warn-500/40 text-warn-600 bg-warn-500/8'
+              : 'border-bad-500/40 text-bad-600 bg-bad-500/8'
           }`}
         >
           {tool.permission}
         </span>
       </div>
-      <p className="line-clamp-2 text-[11px] text-ink-400">{tool.description}</p>
+      <p className="line-clamp-2 text-[11px] leading-relaxed text-ink-500">{tool.description}</p>
     </button>
   )
 }
@@ -226,18 +226,18 @@ function ToolDetail({ name, onError }: { name: string; onError: (msg: string) =>
   return (
     <div className="flex flex-col gap-4">
       {/* Header card */}
-      <div className="panel p-4">
+      <div className="panel p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h2 className="font-mono text-base font-semibold text-gray-100">{tool.name}</h2>
+            <div className="flex items-center gap-2.5">
+              <h2 className="font-mono text-lg font-semibold text-ink-900">{tool.name}</h2>
               <StatusBadge
                 tone={PERMISSION_TONE[tool.permission] ?? 'idle'}
                 label={tool.permission}
               />
             </div>
-            <p className="mt-1.5 text-xs text-ink-300">{tool.description}</p>
-            <p className="mt-1 text-[11px] text-ink-500">
+            <p className="mt-2 text-sm leading-relaxed text-ink-600">{tool.description}</p>
+            <p className="mt-1.5 text-[11px] text-ink-400">
               {PERMISSION_NOTE[tool.permission] ?? ''}
             </p>
           </div>
@@ -245,19 +245,19 @@ function ToolDetail({ name, onError }: { name: string; onError: (msg: string) =>
       </div>
 
       {/* Schema */}
-      <div className="panel p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="hud-label">Input Schema</span>
-          <span className="data-mono text-[10px] text-ink-500">
-            {Object.keys(params).length} parameter{Object.keys(params).length === 1 ? '' : 's'}
+      <div className="panel p-5">
+        <div className="mb-3.5 flex items-center justify-between">
+          <span className="hud-label">Parameters</span>
+          <span className="data-mono text-[10px] text-ink-400">
+            {Object.keys(params).length} input{Object.keys(params).length === 1 ? '' : 's'}
           </span>
         </div>
         {Object.keys(params).length === 0 ? (
-          <p className="font-mono text-[11px] text-ink-500">
-            No parameters — tool runs with default inputs.
+          <p className="text-sm text-ink-400">
+            No parameters — runs with default inputs.
           </p>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             {Object.entries(params).map(([pname, pschema]) => (
               <SchemaRow
                 key={pname}
@@ -273,11 +273,11 @@ function ToolDetail({ name, onError }: { name: string; onError: (msg: string) =>
       </div>
 
       {/* Recent invocations */}
-      <div className="panel p-4">
-        <div className="mb-3 flex items-center justify-between">
+      <div className="panel p-5">
+        <div className="mb-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="hud-label">Recent Invocations</span>
-            <span className="data-mono text-[10px] text-ink-500">{recent.length}</span>
+            <span className="hud-label">Recent usage</span>
+            <span className="data-mono text-[10px] text-ink-400">{recent.length}</span>
           </div>
           <Button variant="ghost" size="sm" onClick={refreshRecent} disabled={loadingRecent}>
             {loadingRecent ? 'Refreshing…' : '↻ Refresh'}
@@ -285,50 +285,50 @@ function ToolDetail({ name, onError }: { name: string; onError: (msg: string) =>
         </div>
         {recent.length === 0 ? (
           <EmptyState
-            icon="▦"
-            title="No invocations recorded"
-            hint="This tool has not been called yet, or the audit log was cleared."
+            icon="✦"
+            title="No usage recorded yet"
+            hint="I haven't called this tool yet, or the log was cleared."
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="hud-label border-b border-ink-800/70">
-                  <th className="py-2 pr-3 font-medium">Time</th>
-                  <th className="py-2 pr-3 font-medium">Task</th>
-                  <th className="py-2 pr-3 font-medium">Status</th>
-                  <th className="py-2 pr-3 text-right font-medium">Duration</th>
-                  <th className="py-2 pr-3 font-medium">Error</th>
+                <tr className="hud-label border-b border-ink-200/70">
+                  <th className="py-2.5 pr-3 font-semibold">When</th>
+                  <th className="py-2.5 pr-3 font-semibold">Task</th>
+                  <th className="py-2.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5 pr-3 text-right font-semibold">Duration</th>
+                  <th className="py-2.5 pr-3 font-semibold">Error</th>
                 </tr>
               </thead>
               <tbody>
                 {recent.map((inv, i) => (
                   <tr
                     key={`${inv.timestamp}-${i}`}
-                    className="border-b border-ink-800/40 text-xs"
+                    className="border-b border-ink-100 text-xs transition-colors hover:bg-ink-50/50"
                   >
-                    <td className="py-2 pr-3 data-mono text-ink-400">
+                    <td className="py-2.5 pr-3 data-mono text-ink-500">
                       {fmtClock(inv.timestamp)}
-                      <span className="ml-1 text-[10px] text-ink-600">
+                      <span className="ml-1.5 text-[10px] text-ink-400">
                         {fmtRelative(inv.timestamp)}
                       </span>
                     </td>
-                    <td className="py-2 pr-3 data-mono text-ink-300">
+                    <td className="py-2.5 pr-3 data-mono text-ink-600">
                       {inv.task_public_id ? inv.task_public_id.slice(0, 8) : '—'}
                     </td>
-                    <td className="py-2 pr-3">
+                    <td className="py-2.5 pr-3">
                       <span
-                        className={`font-mono text-[11px] ${
-                          inv.ok ? 'text-ok-400' : 'text-bad-400'
+                        className={`font-mono text-[11px] font-medium ${
+                          inv.ok ? 'text-ok-600' : 'text-bad-600'
                         }`}
                       >
                         {inv.ok ? '✓ ok' : '✕ fail'}
                       </span>
                     </td>
-                    <td className="py-2 pr-3 text-right data-mono text-ink-400">
+                    <td className="py-2.5 pr-3 text-right data-mono text-ink-500">
                       {fmtMs(inv.duration_ms)}
                     </td>
-                    <td className="py-2 pr-3 truncate text-[11px] text-bad-400/80" title={inv.error ?? ''}>
+                    <td className="py-2.5 pr-3 truncate text-[11px] text-bad-600/80" title={inv.error ?? ''}>
                       {inv.error ?? '—'}
                     </td>
                   </tr>
@@ -360,44 +360,44 @@ function SchemaRow({
   const enumVals = Array.isArray(schema.enum) ? (schema.enum as string[]) : null
   const hasDetail = !!desc || !!enumVals || Object.keys(schema).length > 3
   return (
-    <div className="rounded-md border border-ink-800/60 bg-ink-900/40">
+    <div className="rounded-lg border border-ink-200/70 bg-ink-50/40">
       <button
         onClick={hasDetail ? onToggle : undefined}
-        className={`flex w-full items-center justify-between gap-2 px-2.5 py-1.5 text-left ${
-          hasDetail ? 'hover:bg-ink-850/60' : 'cursor-default'
+        className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left ${
+          hasDetail ? 'hover:bg-ink-100/60' : 'cursor-default'
         }`}
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-mono text-[11px] text-sig-300">{name}</span>
+          <span className="font-mono text-[11px] text-sig-700">{name}</span>
           {required ? (
-            <span className="rounded border border-warn-500/30 px-1 font-mono text-[9px] uppercase text-warn-400">
+            <span className="rounded-full border border-warn-500/40 bg-warn-500/10 px-1.5 text-[9px] font-medium uppercase text-warn-600">
               required
             </span>
           ) : null}
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] text-ink-400">{typeStr}</span>
+          <span className="font-mono text-[10px] text-ink-500">{typeStr}</span>
           {hasDetail ? (
-            <span className="text-ink-500 text-[10px]">{expanded ? '▾' : '▸'}</span>
+            <span className="text-ink-400 text-[10px]">{expanded ? '▾' : '▸'}</span>
           ) : null}
         </div>
       </button>
       {expanded && hasDetail ? (
-        <div className="border-t border-ink-800/60 px-2.5 py-2 text-[11px] text-ink-300">
-          {desc ? <p className="mb-1">{desc}</p> : null}
+        <div className="border-t border-ink-200/70 px-3 py-2.5 text-[11px] leading-relaxed text-ink-600">
+          {desc ? <p className="mb-1.5">{desc}</p> : null}
           {enumVals ? (
-            <div className="mb-1">
+            <div className="mb-1.5">
               <span className="hud-label mr-1">enum</span>
-              <span className="font-mono text-ink-300">
+              <span className="font-mono text-ink-600">
                 {enumVals.join(' | ')}
               </span>
             </div>
           ) : null}
           <details className="mt-1">
-            <summary className="cursor-pointer font-mono text-[10px] text-ink-500 hover:text-ink-300">
+            <summary className="cursor-pointer font-mono text-[10px] text-ink-400 hover:text-ink-600">
               raw schema
             </summary>
-            <pre className="mt-1 max-h-40 overflow-auto rounded bg-ink-950/60 p-2 font-mono text-[10px] text-ink-400">
+            <pre className="mt-1.5 max-h-40 overflow-auto rounded-md bg-ink-100 p-2 font-mono text-[10px] text-ink-500">
               {JSON.stringify(schema, null, 2)}
             </pre>
           </details>

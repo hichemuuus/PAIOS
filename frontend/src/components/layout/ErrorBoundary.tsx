@@ -9,7 +9,7 @@ interface State {
 
 /**
  * Top-level error boundary. Catches render errors anywhere in the tree so a
- * single faulty component doesn't white-screen the whole cockpit. Renders a
+ * single faulty component doesn't white-screen the whole app. Renders a
  * recovery panel with a reset action.
  */
 export class ErrorBoundary extends Component<Props, State> {
@@ -32,25 +32,25 @@ export class ErrorBoundary extends Component<Props, State> {
     const { error } = this.state
     if (!error) return this.props.children
     return (
-      <div className="flex h-screen items-center justify-center p-6">
-        <div className="panel w-full max-w-md p-6">
-          <div className="hud-label text-bad-400">RENDER FAULT</div>
-          <h2 className="mt-2 text-base font-semibold text-gray-100">
+      <div className="flex h-screen items-center justify-center bg-paper p-6">
+        <div className="panel w-full max-w-md p-7">
+          <div className="hud-label text-bad-600">Something went wrong</div>
+          <h2 className="mt-2 font-display text-xl font-medium text-ink-900">
             The interface hit an unexpected error
           </h2>
-          <pre className="mt-3 max-h-48 overflow-auto rounded-md border border-ink-700/60 bg-ink-900/70 p-2 font-mono text-[11px] text-bad-400/90">
+          <pre className="mt-4 max-h-48 overflow-auto rounded-lg border border-ink-200 bg-ink-50 p-3 font-mono text-[11px] text-bad-600">
             {error.message}
           </pre>
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="mt-5 flex justify-end gap-2">
             <button
               onClick={this.reset}
-              className="focus-ring rounded-md border border-sig-400/40 bg-sig-500/10 px-3 py-1.5 text-xs text-sig-200 hover:bg-sig-500/20"
+              className="focus-ring rounded-lg border border-sig-500/40 bg-sig-500/10 px-3.5 py-2 text-xs font-medium text-sig-700 hover:bg-sig-500/15"
             >
-              Attempt Recovery
+              Try again
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="focus-ring rounded-md border border-ink-700/60 px-3 py-1.5 text-xs text-ink-300 hover:bg-ink-800/60"
+              className="focus-ring rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-xs font-medium text-ink-600 hover:bg-ink-50"
             >
               Reload
             </button>

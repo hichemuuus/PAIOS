@@ -31,6 +31,8 @@ from paios.llm.base import (
     get_provider,
 )
 from paios.core.intelligence import classify_request
+from paios.intelligence.training.dataset import UserInteraction, save_user_interaction
+from paios.intelligence.training.quality import QualityScorer
 from paios.llm.micro.router import Intent
 from paios.tools.base import ToolContext, ToolResult
 from paios.tools.registry import get_registry
@@ -262,6 +264,7 @@ class Agent:
             )
             self._complete(task_public_id, assistant_text)
             self.tracker.complete_task(task_public_id, result=assistant_text)
+            self._save_interaction(request, task_public_id, intent, True, answer=assistant_text)
             self._maybe_reflect(request, task_public_id, mode="react")
             return AgentRunResult(
                 answer=assistant_text, iterations=iteration, tool_calls=tool_calls, intent=intent
@@ -274,6 +277,7 @@ class Agent:
         )
         self._fail(task_public_id, msg)
         self.tracker.complete_task(task_public_id, error=msg)
+        self._save_interaction(request, task_public_id, intent, False, error=msg)
         self._maybe_reflect(request, task_public_id, mode="react", success=False, error=msg)
         return AgentRunResult(answer="", iterations=max_iters, tool_calls=tool_calls, error=msg, intent=intent)
 
@@ -308,6 +312,7 @@ class Agent:
         answer = plan.synthesis or "Plan completed but no synthesis was generated."
         iterations = sum(1 for s in plan.steps if s.result is not None)
         self._complete(task_public_id, answer)
+        self._save_interaction(request, task_public_id, intent, True, answer=answer)
         self._maybe_reflect(request, task_public_id, mode="plan")
 
         return AgentRunResult(
@@ -469,6 +474,60 @@ class Agent:
             self.reflection_engine.store_reflection_memories(ref)
         except Exception as e:
             logger.warning("reflection failed for %s: %s", task_public_id, e)
+
+    # --- User interaction capture ----------------------------------------
+
+    def _save_interaction(
+        self,
+        request: str,
+        task_public_id: str,
+        intent: Intent | None,
+        success: bool,
+        answer: str = "",
+        error: str | None = None,
+    ) -> None:
+        """Capture a user interaction for training feedback.
+
+        Serialises the interaction to the daily JSONL file for later use
+        by the training feedback loop. Non-blocking; failures are logged
+        at DEBUG level.
+        """
+        if task_public_id == "system":
+            return
+        if not request:
+            return
+        try:
+            timeline = self.tracker.get_timeline(task_public_id)
+            summary = self.tracker.get_task_summary(task_public_id)
+            tool_call_steps = [s for s in timeline if s.get("step_type") == "tool_call"]
+            qs = QualityScorer()
+            score = qs.score({
+                "success": success,
+                "total_steps": summary["total_steps"],
+                "retry_count": summary["retry_count"],
+                "tools_used": [s.get("name", "") for s in tool_call_steps],
+                "duration_ms": summary["total_duration_ms"],
+                "tool_calls_count": len(tool_call_steps),
+            })
+            interaction = UserInteraction(
+                request=request,
+                detected_intent=intent.intent_category if intent else "",
+                selected_tools=[s.get("name", "") for s in tool_call_steps],
+                parameters={},
+                result=answer or error or "",
+                quality_score=score.overall,
+                task_id=task_public_id,
+                mode=intent.mode if intent else "react",
+                success=success,
+                metadata={
+                    "domain": intent.domain if intent else "",
+                    "confidence": intent.confidence if intent else 0.0,
+                },
+            )
+            save_user_interaction(interaction)
+            logger.debug("saved interaction for task %s", task_public_id)
+        except Exception as e:
+            logger.warning("failed to save user interaction: %s", e)
 
 
 # Process-wide agent.

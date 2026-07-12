@@ -8,13 +8,13 @@ import { useWebSocket } from '../../hooks/useWebSocket'
 import { useInterval } from '../../hooks/useInterval'
 
 const NAV = [
-  { to: '/', label: 'Console', icon: ConsoleIcon, end: true },
-  { to: '/agent', label: 'Agent Workspace', icon: AgentIcon, end: false },
-  { to: '/tasks', label: 'Task Registry', icon: RegistryIcon, end: false },
-  { to: '/tools', label: 'Tool Center', icon: ToolIcon, end: false },
-  { to: '/projects', label: 'Project Intel', icon: ProjectIcon, end: false },
-  { to: '/memory', label: 'Memory Center', icon: MemoryIcon, end: false },
-  { to: '/system', label: 'System Intel', icon: SystemIcon, end: false },
+  { to: '/', label: 'Home', icon: HomeIcon, end: true },
+  { to: '/agent', label: 'Agent', icon: AgentIcon, end: false },
+  { to: '/tasks', label: 'Tasks', icon: TasksIcon, end: false },
+  { to: '/tools', label: 'Tools', icon: ToolIcon, end: false },
+  { to: '/projects', label: 'Projects', icon: ProjectIcon, end: false },
+  { to: '/memory', label: 'Memory', icon: MemoryIcon, end: false },
+  { to: '/system', label: 'System', icon: SystemIcon, end: false },
 ]
 
 export function Layout() {
@@ -22,7 +22,7 @@ export function Layout() {
   useWebSocket()
 
   return (
-    <div className="flex h-screen overflow-hidden text-gray-100">
+    <div className="flex h-screen overflow-hidden bg-paper text-ink-900">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
@@ -38,36 +38,43 @@ export function Layout() {
 
 function Sidebar() {
   return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-ink-800/80 bg-ink-950/60 backdrop-blur">
-      <div className="px-4 py-4">
+    <aside className="flex w-60 shrink-0 flex-col border-r border-ink-200/80 bg-paper/80 backdrop-blur">
+      <div className="px-5 py-5">
         <Logo />
       </div>
-      <nav className="mt-2 flex flex-1 flex-col gap-1 px-2">
+      <nav className="mt-3 flex flex-1 flex-col gap-0.5 px-3">
         {NAV.map((n) => (
           <NavLink
             key={n.to}
             to={n.to}
             end={n.end}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors focus-ring ${
+              `group flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all focus-ring ${
                 isActive
-                  ? 'border border-sig-400/30 bg-sig-500/10 text-sig-200 shadow-glow'
-                  : 'border border-transparent text-ink-300 hover:bg-ink-850/70 hover:text-gray-100'
+                  ? 'bg-sig-50 font-medium text-sig-700 shadow-soft'
+                  : 'text-ink-600 hover:bg-ink-100/70 hover:text-ink-900'
               }`
             }
           >
-            <n.icon className="h-4 w-4 shrink-0" />
-            <span className="font-medium">{n.label}</span>
+            {({ isActive }) => (
+              <>
+                <n.icon
+                  className={`h-[18px] w-[18px] shrink-0 transition-colors ${
+                    isActive ? 'text-sig-600' : 'text-ink-400 group-hover:text-ink-600'
+                  }`}
+                />
+                <span>{n.label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      <div className="px-4 py-4">
-        <div className="rounded-lg border border-ink-800/70 bg-ink-900/40 p-3">
-          <div className="hud-label mb-1">System</div>
-          <p className="text-[11px] leading-snug text-ink-400">
-            Autonomous agent runtime. Submit a mission, observe execution,
-            receive verified results.
+      <div className="px-3 pb-5">
+        <div className="rounded-xl border border-ink-200/70 bg-cream/50 p-3.5">
+          <div className="font-display text-sm font-medium text-ink-800">Your companion</div>
+          <p className="mt-1 text-[11px] leading-relaxed text-ink-500">
+            Describe a goal, and Paios plans, acts, and verifies — then remembers.
           </p>
         </div>
       </div>
@@ -77,9 +84,9 @@ function Sidebar() {
 
 function Header() {
   return (
-    <header className="flex h-12 shrink-0 items-center justify-between border-b border-ink-800/80 bg-ink-950/40 px-5 backdrop-blur">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-ink-200/80 bg-paper/70 px-6 backdrop-blur">
       <div className="flex items-center gap-2">
-        <span className="hud-label">PAIOS · CONTROL CENTER</span>
+        <span className="hud-label text-ink-400">Paios · Personal AI</span>
       </div>
       <div className="flex items-center gap-3">
         <Clock />
@@ -103,11 +110,11 @@ function Clock() {
 
 type IconProps = { className?: string }
 
-function ConsoleIcon({ className }: IconProps) {
+function HomeIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="3" y="4" width="18" height="14" rx="2" />
-      <path d="M7 9l3 3-3 3M13 15h4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 11l8-6.5 8 6.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 10v9h12v-9" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -120,13 +127,11 @@ function AgentIcon({ className }: IconProps) {
     </svg>
   )
 }
-function RegistryIcon({ className }: IconProps) {
+function TasksIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-      <circle cx="7" cy="6" r="0.8" fill="currentColor" />
-      <circle cx="11" cy="12" r="0.8" fill="currentColor" />
-      <circle cx="9" cy="18" r="0.8" fill="currentColor" />
+      <rect x="4" y="5" width="16" height="15" rx="2.5" />
+      <path d="M8 11l2 2 3.5-3.5M8 16h8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -148,8 +153,8 @@ function ProjectIcon({ className }: IconProps) {
 function MemoryIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="4" y="6" width="16" height="12" rx="2" />
-      <path d="M8 6v-2M12 6v-2M16 6v-2M8 20v-2M12 20v-2M16 20v-2" strokeLinecap="round" />
+      <path d="M5 5h11a3 3 0 0 1 3 3v11a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5z" strokeLinejoin="round" />
+      <path d="M9 9h6M9 13h6M9 17h3" strokeLinecap="round" />
     </svg>
   )
 }

@@ -88,12 +88,12 @@ export interface StatusInfo {
 const STATUS_MAP: Record<string, StatusInfo> = {
   created: { label: 'Queued', tone: 'idle' },
   planning: { label: 'Planning', tone: 'active' },
-  running: { label: 'Running', tone: 'active' },
+  running: { label: 'Working', tone: 'active' },
   paused: { label: 'Paused', tone: 'warn' },
   verifying: { label: 'Verifying', tone: 'active' },
-  completed: { label: 'Completed', tone: 'ok' },
+  completed: { label: 'Done', tone: 'ok' },
   failed: { label: 'Failed', tone: 'fail' },
-  cancelled: { label: 'Cancelled', tone: 'warn' },
+  cancelled: { label: 'Canceled', tone: 'warn' },
 }
 
 export function statusInfo(status: string | undefined | null): StatusInfo {
@@ -111,19 +111,19 @@ export function isTerminalStatus(status: string | undefined | null): boolean {
 }
 
 export const TONE_RING: Record<StatusTone, string> = {
-  active: 'border-sig-400/40 text-sig-300 bg-sig-500/10',
-  ok: 'border-ok-500/40 text-ok-400 bg-ok-500/10',
-  warn: 'border-warn-500/40 text-warn-400 bg-warn-500/10',
-  fail: 'border-bad-500/40 text-bad-400 bg-bad-500/10',
-  idle: 'border-ink-600/60 text-ink-400 bg-ink-700/30',
+  active: 'border-sig-500/30 text-sig-700 bg-sig-50',
+  ok: 'border-ok-500/30 text-ok-600 bg-ok-500/8',
+  warn: 'border-warn-500/40 text-warn-600 bg-warn-500/8',
+  fail: 'border-bad-500/40 text-bad-600 bg-bad-500/8',
+  idle: 'border-ink-300 text-ink-500 bg-ink-100',
 }
 
 export const TONE_DOT: Record<StatusTone, string> = {
-  active: 'bg-sig-400',
+  active: 'bg-sig-500',
   ok: 'bg-ok-500',
   warn: 'bg-warn-500',
   fail: 'bg-bad-500',
-  idle: 'bg-ink-500',
+  idle: 'bg-ink-400',
 }
 
 export const TASK_STATUS_VALUES: TaskStatus[] = [

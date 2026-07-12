@@ -20,7 +20,7 @@ export function Sparkline({
   width = 120,
   height = 28,
   className,
-  color = '#52e6ff',
+  color = '#C75D3A',
 }: SparklineProps) {
   const path = useMemo(() => {
     if (values.length < 2) return ''

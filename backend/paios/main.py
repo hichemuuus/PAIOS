@@ -72,9 +72,21 @@ async def lifespan(app: FastAPI):
     except Exception as e:  # noqa: BLE001
         logger.warning("LLM availability check: %s", e)
 
+    # Start the intelligence scheduler for background retraining.
+    from paios.intelligence.scheduler import IntelligenceScheduler
+    from paios.config import get_settings
+    settings = get_settings()
+    scheduler = IntelligenceScheduler(
+        interval_seconds=settings.model.scheduler_interval_seconds,
+        retrain_min_growth_pct=settings.model.retrain_min_growth_pct,
+    )
+    app.state.scheduler = scheduler
+    await scheduler.start()
+
     yield
 
     # Shutdown cleanup.
+    await scheduler.stop()
     bus = get_bus()
     await bus.shutdown()
     logger.info("PAIOS shutdown complete")
@@ -105,7 +117,7 @@ def create_app() -> FastAPI:
     )
 
     # Register routes.
-    from paios.api.routes import agent, dashboard, memory, projects, system, tools
+    from paios.api.routes import agent, dashboard, intelligence, memory, projects, system, tools
     from paios.api.websocket import router as ws_router
 
     app.include_router(agent.router)
@@ -114,6 +126,7 @@ def create_app() -> FastAPI:
     app.include_router(projects.router)
     app.include_router(memory.router)
     app.include_router(dashboard.router)
+    app.include_router(intelligence.router)
     app.include_router(ws_router)
 
     @app.get("/api/health")
@@ -152,6 +165,7 @@ def create_app() -> FastAPI:
                     "tools": "/api/tools",
                     "projects": "/api/projects",
                     "memory": "/api/memory",
+                    "intelligence": "/api/intelligence/metrics",
                 },
                 "docs": "/docs",
                 "websocket": "/ws",

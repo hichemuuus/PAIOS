@@ -42,6 +42,8 @@ class Intent:
     confidence: float
     # Micro-model intent category (None when using heuristic router).
     intent_category: str | None = None
+    # Predicted tools from the tool selector micro-model (empty when not available).
+    predicted_tools: list[str] | None = None
 
 
 _COMPLEX_PATTERNS = [

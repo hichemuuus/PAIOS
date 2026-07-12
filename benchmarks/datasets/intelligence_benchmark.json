@@ -1,0 +1,452 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_at": "2026-07-12",
+    "description": "Phase 11.5 Intelligence Evaluation — curated real-task benchmark for parameter extraction, tool selection, task success, and regression detection."
+  },
+  "param_extraction": [
+    {
+      "id": "pe_fs_path_1",
+      "request": "list all files in the tests directory",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "tests"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_fs_path_2",
+      "request": "show me what is in the src folder",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "src"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_fs_path_pattern_1",
+      "request": "find all .py files in the project root",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": ".", "pattern": "*.py"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_fs_path_pattern_2",
+      "request": "list all markdown files in docs",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "docs", "pattern": "*.md"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_fs_depth",
+      "request": "show the directory tree three levels deep",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": ".", "depth": 3},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_fs_search",
+      "request": "find all files containing the word deprecated in the codebase",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": ".", "search": "deprecated"},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_fs_search_todo",
+      "request": "search for todo comments across the project",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": ".", "search": "TODO"},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_fs_lines",
+      "request": "read the first 20 lines of the main log file",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "logs/app.log", "lines": 20},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_fs_readme",
+      "request": "read the readme file",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "README.md"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_fs_package",
+      "request": "show the contents of package.json",
+      "tool_name": "filesystem_read",
+      "expected_parameters": {"path": "package.json"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_sm_cpu",
+      "request": "what is the current cpu usage percentage",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "cpu"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_sm_memory",
+      "request": "how much ram is currently in use",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "memory"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_sm_disk",
+      "request": "show me the disk space available",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "disk"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_sm_processes_sorted",
+      "request": "show top 5 processes sorted by memory usage",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "processes", "sort_by": "memory", "limit": 5},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_sm_health",
+      "request": "run a full system health check",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "health"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_sm_uptime",
+      "request": "how long has the system been running",
+      "tool_name": "system_monitor",
+      "expected_parameters": {"metric": "uptime"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_term_basic",
+      "request": "run npm install",
+      "tool_name": "terminal",
+      "expected_parameters": {"command": "npm install"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_term_build",
+      "request": "build the frontend for production",
+      "tool_name": "terminal",
+      "expected_parameters": {"command": "npm run build"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_term_test",
+      "request": "run the test suite with verbose output",
+      "tool_name": "terminal",
+      "expected_parameters": {"command": "pytest -v"},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_term_git_status",
+      "request": "check the current git status",
+      "tool_name": "terminal",
+      "expected_parameters": {"command": "git status"},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_term_timeout",
+      "request": "run a database migration with a 60 second timeout",
+      "tool_name": "terminal",
+      "expected_parameters": {"command": "alembic upgrade head", "timeout": 60},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_pa_basic",
+      "request": "analyze the project in the current directory",
+      "tool_name": "project_analyzer",
+      "expected_parameters": {"path": "."},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_pa_full",
+      "request": "do a full analysis of the backend source code",
+      "tool_name": "project_analyzer",
+      "expected_parameters": {"path": "backend", "depth": "full"},
+      "difficulty": "moderate"
+    },
+    {
+      "id": "pe_pa_tech_stack",
+      "request": "what technologies does this project use",
+      "tool_name": "project_analyzer",
+      "expected_parameters": {"path": "."},
+      "difficulty": "basic"
+    },
+    {
+      "id": "pe_pa_frontend",
+      "request": "analyze only the frontend directory structure",
+      "tool_name": "project_analyzer",
+      "expected_parameters": {"path": "frontend"},
+      "difficulty": "basic"
+    }
+  ],
+  "tool_selection": [
+    {
+      "id": "ts_cpu",
+      "request": "what is the current cpu usage",
+      "expected_tools": ["system_monitor"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_memory",
+      "request": "how much memory is being used right now",
+      "expected_tools": ["system_monitor"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_disk",
+      "request": "show disk usage statistics",
+      "expected_tools": ["system_monitor"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_processes",
+      "request": "list all running processes",
+      "expected_tools": ["system_monitor"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_list_files",
+      "request": "list files in the current directory",
+      "expected_tools": ["filesystem_read"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_read_file",
+      "request": "read the contents of the config file",
+      "expected_tools": ["filesystem_read"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_find_python",
+      "request": "find all python files in the project",
+      "expected_tools": ["filesystem_read"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_run_npm",
+      "request": "install all npm dependencies",
+      "expected_tools": ["terminal"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_run_test",
+      "request": "run the full test suite",
+      "expected_tools": ["terminal"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_git_log",
+      "request": "show me the recent git history",
+      "expected_tools": ["terminal"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_project_analysis",
+      "request": "analyze the project structure",
+      "expected_tools": ["project_analyzer"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_tech_stack",
+      "request": "detect the technology stack used in this project",
+      "expected_tools": ["project_analyzer"],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_multi_cpu_mem",
+      "request": "check both cpu and memory usage",
+      "expected_tools": ["system_monitor", "system_monitor"],
+      "difficulty": "moderate"
+    },
+    {
+      "id": "ts_multi_file_term",
+      "request": "read the log file and search for errors",
+      "expected_tools": ["filesystem_read", "terminal"],
+      "difficulty": "moderate"
+    },
+    {
+      "id": "ts_complex_debug",
+      "request": "why is the build failing — check the logs and run the build command",
+      "expected_tools": ["filesystem_read", "terminal"],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "ts_complex_perf",
+      "request": "investigate system performance and analyze the project for bottlenecks",
+      "expected_tools": ["system_monitor", "project_analyzer"],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "ts_conversation_hello",
+      "request": "hello",
+      "expected_tools": [],
+      "difficulty": "basic"
+    },
+    {
+      "id": "ts_conversation_help",
+      "request": "what can you do",
+      "expected_tools": [],
+      "difficulty": "basic"
+    }
+  ],
+  "task_success": [
+    {
+      "id": "task_echo",
+      "prompt": "Run the command: echo hello world",
+      "category": "basic",
+      "expected_tools": ["terminal"],
+      "min_steps": 1,
+      "max_steps": 3
+    },
+    {
+      "id": "task_list_cwd",
+      "prompt": "List all files in the current directory",
+      "category": "basic",
+      "expected_tools": ["filesystem_read"],
+      "min_steps": 1,
+      "max_steps": 5
+    },
+    {
+      "id": "task_cpu_check",
+      "prompt": "What is the current CPU usage percentage?",
+      "category": "basic",
+      "expected_tools": ["system_monitor"],
+      "min_steps": 1,
+      "max_steps": 5
+    },
+    {
+      "id": "task_ram_check",
+      "prompt": "How much RAM is currently in use?",
+      "category": "basic",
+      "expected_tools": ["system_monitor"],
+      "min_steps": 1,
+      "max_steps": 5
+    },
+    {
+      "id": "task_read_package",
+      "prompt": "Read the file at backend/paios/__init__.py",
+      "category": "basic",
+      "expected_tools": ["filesystem_read"],
+      "min_steps": 1,
+      "max_steps": 5
+    },
+    {
+      "id": "task_full_health",
+      "prompt": "Check CPU, memory, and disk usage",
+      "category": "intermediate",
+      "expected_tools": ["system_monitor", "system_monitor", "system_monitor"],
+      "min_steps": 1,
+      "max_steps": 8
+    },
+    {
+      "id": "task_error_recovery",
+      "prompt": "Read the file /nonexistent/foo.txt, and if that fails read backend/paios/__init__.py instead",
+      "category": "intermediate",
+      "expected_tools": ["filesystem_read", "filesystem_read"],
+      "min_steps": 1,
+      "max_steps": 8
+    },
+    {
+      "id": "task_multi_step",
+      "prompt": "First check CPU usage, then check memory, then tell me which is higher",
+      "category": "intermediate",
+      "expected_tools": ["system_monitor", "system_monitor"],
+      "min_steps": 2,
+      "max_steps": 10
+    },
+    {
+      "id": "task_complex_replan",
+      "prompt": "List files in the current directory, then check CPU usage, then read backend/paios/__init__.py and summarize",
+      "category": "advanced",
+      "expected_tools": ["filesystem_read", "system_monitor", "filesystem_read"],
+      "min_steps": 3,
+      "max_steps": 15
+    },
+    {
+      "id": "task_conversation",
+      "prompt": "hello, what is your name",
+      "category": "basic",
+      "expected_tools": [],
+      "min_steps": 1,
+      "max_steps": 5
+    }
+  ],
+  "regression": [
+    {
+      "id": "reg_empty_request",
+      "request": "",
+      "type": "routing",
+      "expected_behavior": "graceful_handling",
+      "expected_tools": []
+    },
+    {
+      "id": "reg_very_long",
+      "request": "I need you to do a lot of things at once. First, check the CPU usage. Then check memory. Then look at disk. Then list all the files. Then read the config. Then analyze the project. Then run the tests. Then tell me everything you found in a nice summary.",
+      "type": "routing",
+      "expected_behavior": "classified_as_plan",
+      "expected_tools": ["system_monitor", "system_monitor", "system_monitor", "filesystem_read", "filesystem_read", "project_analyzer", "terminal"]
+    },
+    {
+      "id": "reg_typo_cpu",
+      "request": "whats the cu usage",
+      "type": "parameter_extraction",
+      "expected_tool": "system_monitor",
+      "expected_parameters": {"metric": "cpu"},
+      "expected_behavior": "fuzzy_match"
+    },
+    {
+      "id": "reg_case_insensitive",
+      "request": "READ THE README FILE",
+      "type": "parameter_extraction",
+      "expected_tool": "filesystem_read",
+      "expected_parameters": {"path": "README.md"},
+      "expected_behavior": "case_insensitive"
+    },
+    {
+      "id": "reg_special_chars",
+      "request": "run: pytest tests/unit/test_agent.py",
+      "type": "tool_selection",
+      "expected_behavior": "tool_execution",
+      "expected_tools": ["terminal"]
+    },
+    {
+      "id": "reg_multi_word_path",
+      "request": "list files in the my project folder directory",
+      "type": "parameter_extraction",
+      "expected_tool": "filesystem_read",
+      "expected_parameters": {"path": "my project folder"},
+      "expected_behavior": "path_extraction"
+    },
+    {
+      "id": "reg_ambiguous",
+      "request": "can you help me with something",
+      "type": "routing",
+      "expected_behavior": "conversation",
+      "expected_tools": []
+    },
+    {
+      "id": "reg_process_with_flags",
+      "request": "show all processes sorted by cpu usage, limit to top 10",
+      "type": "parameter_extraction",
+      "expected_tool": "system_monitor",
+      "expected_parameters": {"metric": "processes", "sort_by": "cpu", "limit": 10},
+      "expected_behavior": "param_extraction"
+    },
+    {
+      "id": "reg_docker_command",
+      "request": "check if docker is running",
+      "type": "tool_selection",
+      "expected_behavior": "terminal",
+      "expected_tools": ["terminal"]
+    },
+    {
+      "id": "reg_greeting",
+      "request": "good morning, how are you",
+      "type": "routing",
+      "expected_behavior": "conversation",
+      "expected_tools": []
+    }
+  ]
+}

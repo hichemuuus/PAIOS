@@ -74,21 +74,21 @@ export function ProjectIntelligencePage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6">
+    <div className="mx-auto max-w-6xl px-8 py-8 page-enter">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">Project Intelligence</h1>
-          <p className="mt-0.5 text-xs text-ink-400">
-            Scan a project directory — detect stack, dependencies, structure, issues, and recommendations.
+          <h1 className="font-display text-display-sm font-semibold text-ink-900">Projects</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Point me at a directory and I'll map its stack, structure, and health.
           </p>
         </div>
       </header>
 
       {/* Scan form */}
-      <section className="panel mt-4 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="hud-label">Project Path</span>
-          <span className="font-mono text-[10px] text-ink-500">
+      <section className="panel mt-6 p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="hud-label">Project path</span>
+          <span className="font-mono text-[10px] text-ink-400">
             sandbox-validated · ⌘↵ to scan
           </span>
         </div>
@@ -98,10 +98,10 @@ export function ProjectIntelligencePage() {
             onChange={(e) => setPath(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="/path/to/project (within sandbox roots)"
-            className="focus-ring h-10 flex-1 rounded-md border border-ink-700/70 bg-ink-900/70 px-3 font-mono text-sm text-gray-100 placeholder:text-ink-600"
+            className="focus-ring h-11 flex-1 rounded-lg border border-ink-200 bg-ink-50/50 px-3.5 font-mono text-sm text-ink-900 placeholder:text-ink-400"
           />
           <div className="flex items-center gap-2">
-            <label className="flex items-center gap-1.5 font-mono text-[11px] text-ink-400">
+            <label className="flex items-center gap-1.5 text-[11px] font-medium text-ink-500">
               depth
               <input
                 type="number"
@@ -109,15 +109,15 @@ export function ProjectIntelligencePage() {
                 max={20}
                 value={maxDepth}
                 onChange={(e) => setMaxDepth(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                className="focus-ring w-14 rounded border border-ink-700/70 bg-ink-900/70 px-2 py-1 text-center text-xs text-gray-100"
+                className="focus-ring w-14 rounded-lg border border-ink-200 bg-ink-50/50 px-2 py-1.5 text-center text-xs text-ink-800"
               />
             </label>
-            <label className="flex items-center gap-1.5 font-mono text-[11px] text-ink-400">
+            <label className="flex items-center gap-1.5 text-[11px] font-medium text-ink-500">
               <input
                 type="checkbox"
                 checked={includeHidden}
                 onChange={(e) => setIncludeHidden(e.target.checked)}
-                className="accent-sig-400"
+                className="accent-sig-500"
               />
               hidden
             </label>
@@ -133,14 +133,14 @@ export function ProjectIntelligencePage() {
 
         {/* Scan progress bar */}
         {loading ? (
-          <div className="mt-3">
-            <div className="scanbar h-1.5 w-full overflow-hidden rounded-full bg-ink-800/80">
+          <div className="mt-4">
+            <div className="scanbar h-1.5 w-full overflow-hidden rounded-full bg-ink-200">
               <div
-                className="h-full bg-sig-400/70 transition-all duration-300"
+                className="h-full bg-sig-500 transition-all duration-300"
                 style={{ width: `${scanProgress}%` }}
               />
             </div>
-            <div className="mt-1 flex justify-between font-mono text-[10px] text-ink-500">
+            <div className="mt-2 flex justify-between font-mono text-[10px] text-ink-400">
               <span>analyzing structure · detecting stack · parsing dependencies</span>
               <span>{Math.round(scanProgress)}%</span>
             </div>
@@ -149,15 +149,15 @@ export function ProjectIntelligencePage() {
       </section>
 
       {error ? (
-        <div className="mt-4">
+        <div className="mt-5">
           <ErrorBox message={error} />
         </div>
       ) : null}
 
       {!loading && !analysis && !error ? (
-        <div className="panel mt-4">
+        <div className="panel mt-5">
           <EmptyState
-            icon="◎"
+            icon="✦"
             title="No project scanned yet"
             hint="Enter a project path above to analyze its structure, technologies, and issues."
           />
@@ -171,7 +171,7 @@ export function ProjectIntelligencePage() {
 
 function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
   return (
-    <div className="mt-4 flex flex-col gap-4">
+    <div className="mt-6 flex flex-col gap-5">
       {/* Summary stats */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat
@@ -193,48 +193,48 @@ function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
           sub={`${analysis.issues.filter((i) => i.severity === 'high').length} high`}
         />
         <Stat
-          label="Recommendations"
+          label="Suggestions"
           value={analysis.recommendations.length}
           tone="default"
         />
       </section>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Technologies */}
-        <div className="panel p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="hud-label">Detected Stack</span>
-            <span className="data-mono text-[10px] text-ink-500">
+        <div className="panel p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="hud-label">Detected stack</span>
+            <span className="data-mono text-[10px] text-ink-400">
               {analysis.technologies.length} tech
             </span>
           </div>
           {analysis.technologies.length === 0 ? (
-            <p className="font-mono text-[11px] text-ink-500">
+            <p className="text-sm text-ink-400">
               No technologies detected.
             </p>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               {analysis.technologies.map((tech) => (
                 <div
                   key={tech.name}
-                  className="rounded-md border border-ink-800/60 bg-ink-900/40 p-2.5"
+                  className="rounded-xl border border-ink-200/70 bg-ink-50/50 p-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-medium text-sig-300">
+                    <span className="font-mono text-sm font-medium text-sig-700">
                       {tech.name}
                     </span>
-                    <span className="data-mono text-[10px] text-ink-400">
+                    <span className="data-mono text-[10px] text-ink-500">
                       {(tech.confidence * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-ink-800/80">
+                  <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-ink-200">
                     <div
-                      className="h-full bg-gradient-to-r from-sig-500/70 to-sig-300"
+                      className="h-full bg-gradient-to-r from-sig-500 to-sig-400"
                       style={{ width: `${Math.max(4, tech.confidence * 100)}%` }}
                     />
                   </div>
                   {tech.evidence.length > 0 ? (
-                    <p className="mt-1.5 truncate font-mono text-[10px] text-ink-500">
+                    <p className="mt-2 truncate font-mono text-[10px] text-ink-400">
                       {tech.evidence.join(' · ')}
                     </p>
                   ) : null}
@@ -245,19 +245,19 @@ function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
         </div>
 
         {/* Dependencies */}
-        <div className="panel p-4">
-          <div className="mb-3 flex items-center justify-between">
+        <div className="panel p-5">
+          <div className="mb-4 flex items-center justify-between">
             <span className="hud-label">Dependencies</span>
-            <span className="data-mono text-[10px] text-ink-500">
+            <span className="data-mono text-[10px] text-ink-400">
               {Object.keys(analysis.dependencies).length} manager(s)
             </span>
           </div>
           {Object.keys(analysis.dependencies).length === 0 ? (
-            <p className="font-mono text-[11px] text-ink-500">
+            <p className="text-sm text-ink-400">
               No dependency files detected.
             </p>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               {Object.entries(analysis.dependencies).map(([mgr, deps]) => (
                 <DependencyGroup key={mgr} manager={mgr} deps={deps} />
               ))}
@@ -266,17 +266,17 @@ function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
         </div>
 
         {/* Issues */}
-        <div className="panel p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="hud-label">Issues Detected</span>
-            <span className="data-mono text-[10px] text-ink-500">
+        <div className="panel p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="hud-label">Issues found</span>
+            <span className="data-mono text-[10px] text-ink-400">
               {analysis.issues.length} total
             </span>
           </div>
           {analysis.issues.length === 0 ? (
-            <EmptyState icon="✓" title="No issues found" hint="Project looks clean." />
+            <EmptyState icon="✓" title="No issues found" hint="This project looks clean." />
           ) : (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               {analysis.issues.map((issue, i) => (
                 <IssueRow key={i} issue={issue} />
               ))}
@@ -285,23 +285,23 @@ function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
         </div>
 
         {/* Recommendations */}
-        <div className="panel p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="hud-label">Recommendations</span>
-            <span className="data-mono text-[10px] text-ink-500">
-              {analysis.recommendations.length} suggestion(s)
+        <div className="panel p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="hud-label">Suggestions</span>
+            <span className="data-mono text-[10px] text-ink-400">
+              {analysis.recommendations.length} tip{analysis.recommendations.length === 1 ? '' : 's'}
             </span>
           </div>
           {analysis.recommendations.length === 0 ? (
-            <EmptyState icon="✓" title="No recommendations" hint="Nothing to flag." />
+            <EmptyState icon="✓" title="No suggestions" hint="Nothing to flag." />
           ) : (
             <ul className="flex flex-col gap-2">
               {analysis.recommendations.map((rec, i) => (
                 <li
                   key={i}
-                  className="flex gap-2 rounded-md border border-ink-800/60 bg-ink-900/40 p-2.5 text-xs text-ink-200"
+                  className="flex gap-2.5 rounded-xl border border-ink-200/70 bg-ink-50/50 p-3 text-xs leading-relaxed text-ink-700"
                 >
-                  <span className="text-sig-400">→</span>
+                  <span className="text-sig-500">→</span>
                   <span>{rec}</span>
                 </li>
               ))}
@@ -311,10 +311,10 @@ function AnalysisResult({ analysis }: { analysis: ProjectAnalysis }) {
       </div>
 
       {/* Structure tree */}
-      <div className="panel p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="hud-label">Project Structure</span>
-          <span className="data-mono text-[10px] text-ink-500">
+      <div className="panel p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <span className="hud-label">Project structure</span>
+          <span className="data-mono text-[10px] text-ink-400">
             root: {analysis.root}
           </span>
         </div>
@@ -330,23 +330,23 @@ function DependencyGroup({ manager, deps }: { manager: string; deps: string[] })
   const [expanded, setExpanded] = useState(false)
   const visible = expanded ? deps : deps.slice(0, 8)
   return (
-    <div className="rounded-md border border-ink-800/60 bg-ink-900/40 p-2.5">
+    <div className="rounded-xl border border-ink-200/70 bg-ink-50/50 p-3">
       <button
         onClick={() => setExpanded((v) => !v)}
         className="flex w-full items-center justify-between"
       >
-        <span className="font-mono text-[11px] uppercase tracking-wide text-violet-400">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-violet-600">
           {manager}
         </span>
-        <span className="data-mono text-[10px] text-ink-500">
+        <span className="data-mono text-[10px] text-ink-400">
           {deps.length} pkg{deps.length === 1 ? '' : 's'} {expanded ? '▾' : '▸'}
         </span>
       </button>
-      <div className="mt-2 flex flex-wrap gap-1">
+      <div className="mt-2.5 flex flex-wrap gap-1">
         {visible.map((d) => (
           <span
             key={d}
-            className="rounded border border-ink-700/60 bg-ink-850/60 px-1.5 py-0.5 font-mono text-[10px] text-ink-300"
+            className="rounded-md border border-ink-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-ink-600"
           >
             {d}
           </span>
@@ -354,7 +354,7 @@ function DependencyGroup({ manager, deps }: { manager: string; deps: string[] })
         {deps.length > 8 && !expanded ? (
           <button
             onClick={() => setExpanded(true)}
-            className="font-mono text-[10px] text-sig-400 hover:underline"
+            className="text-[10px] font-medium text-sig-600 hover:underline"
           >
             +{deps.length - 8} more
           </button>
@@ -368,14 +368,14 @@ function IssueRow({ issue }: { issue: ProjectIssue }) {
   const tone = SEVERITY_TONE[issue.severity] ?? 'idle'
   const glyph = SEVERITY_GLYPH[issue.severity] ?? '·'
   return (
-    <div className="flex items-start gap-2 rounded-md border border-ink-800/60 bg-ink-900/40 p-2.5">
+    <div className="flex items-start gap-3 rounded-xl border border-ink-200/70 bg-ink-50/50 p-3">
       <span
-        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded font-mono text-[11px] ${
+        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-medium ${
           tone === 'fail'
-            ? 'bg-bad-500/15 text-bad-400'
+            ? 'bg-bad-500/15 text-bad-600'
             : tone === 'warn'
-            ? 'bg-warn-500/15 text-warn-400'
-            : 'bg-ink-800/60 text-ink-400'
+            ? 'bg-warn-500/15 text-warn-600'
+            : 'bg-ink-200 text-ink-500'
         }`}
       >
         {glyph}
@@ -387,7 +387,7 @@ function IssueRow({ issue }: { issue: ProjectIssue }) {
           </span>
           <StatusBadge tone={tone} label={issue.severity} />
         </div>
-        <p className="mt-0.5 text-xs text-ink-200">{issue.message}</p>
+        <p className="mt-1 text-xs leading-relaxed text-ink-700">{issue.message}</p>
       </div>
     </div>
   )
@@ -401,18 +401,18 @@ function TreeView({ node, depth }: { node: ProjectTreeNode; depth: number }) {
       <button
         onClick={isDir ? () => setExpanded((v) => !v) : undefined}
         className={`flex items-center gap-1.5 py-0.5 font-mono text-[11px] ${
-          isDir ? 'cursor-pointer hover:text-gray-100' : 'cursor-default'
+          isDir ? 'cursor-pointer hover:text-ink-900' : 'cursor-default'
         }`}
         style={{ paddingLeft: `${depth * 16}px` }}
       >
         {isDir ? (
-          <span className="text-ink-500">{expanded ? '▾' : '▸'}</span>
+          <span className="text-ink-400">{expanded ? '▾' : '▸'}</span>
         ) : (
-          <span className="text-ink-600">·</span>
+          <span className="text-ink-300">·</span>
         )}
-        <span className={isDir ? 'text-sig-300' : 'text-ink-300'}>{node.name}</span>
+        <span className={isDir ? 'font-medium text-sig-700' : 'text-ink-600'}>{node.name}</span>
         {!isDir && typeof node.size === 'number' ? (
-          <span className="text-[10px] text-ink-600">{fmtBytes(node.size)}</span>
+          <span className="text-[10px] text-ink-400">{fmtBytes(node.size)}</span>
         ) : null}
       </button>
       {isDir && expanded && node.children ? (

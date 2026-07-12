@@ -106,6 +106,10 @@ class ModelConfig(BaseSettings):
     micro_models_enabled: bool = False
     micro_model_confidence_threshold: float = 0.7
 
+    # Scheduler settings for background retraining.
+    scheduler_interval_seconds: int = 300
+    retrain_min_growth_pct: float = 10.0
+
 
 class ServerConfig(BaseSettings):
     """HTTP server settings."""

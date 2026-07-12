@@ -1,17 +1,18 @@
 """Intelligence layer — routes requests through micro-models before falling back to the LLM.
 
-Phase 2 upgrade: predicts complexity, planning needs, and LLM escalation
-in addition to intent category.
+Phase 9.4: micro-models become the first decision layer. The intent
+classifier and tool selector run first at low latency. Only low-confidence
+requests route to the LLM.
 
 Flow:
-  1. If micro_models_enabled, run intent classifier.
-  2. If confidence >= threshold, use the classified intent and metadata
-     to decide routing:
+  1. If micro_models_enabled, run intent classifier + tool selector.
+  2. If confidence >= threshold, use micro-model predictions:
+       - predicted_tools are returned for downstream schema filtering
        - Simple + no tool → direct answer (bypass LLM entirely)
        - Tool needed but no planning → ReAct loop
        - Planning needed → Planner delegation
-       - Low confidence/complex → fall through to LLM
-  3. If micro_models_disabled or low confidence, use heuristic router.
+  3. Low confidence → fall through to heuristic router.
+  4. Heuristic router remains the final fallback when micro-models are disabled.
 """
 
 from __future__ import annotations
@@ -25,16 +26,13 @@ from paios.intelligence.intent.inference import (
     should_use_llm,
 )
 from paios.intelligence.intent.dataset import CATEGORY_TO_DOMAIN, CATEGORY_TO_MODE
+from paios.intelligence.tool_selector.inference import predict_tool_names
 from paios.llm.micro.router import Intent, route as heuristic_route
 
 logger = logging.getLogger(__name__)
 
-# Confidence thresholds for routing decisions.
-_HIGH_CONFIDENCE = 0.8  # Bypass LLM entirely for simple requests.
-_MEDIUM_CONFIDENCE = 0.6  # Use micro-model routing but still allow LLM for complex tasks.
 
-
-def _classifier_to_intent(result: ClassifierResult) -> Intent:
+def _classifier_to_intent(result: ClassifierResult, predicted_tools: list[str] | None = None) -> Intent:
     """Convert a ClassifierResult to the canonical Intent dataclass."""
     mode = CATEGORY_TO_MODE.get(result.category, "react")
     domain = CATEGORY_TO_DOMAIN.get(result.category, "general")
@@ -48,18 +46,19 @@ def _classifier_to_intent(result: ClassifierResult) -> Intent:
         domain=domain,
         confidence=result.confidence,
         intent_category=result.category,
+        predicted_tools=predicted_tools or result.all_probabilities.get("predicted_tools"),
     )
 
 
 def classify_request(request: str) -> Intent:
     """Classify a user request, returning an Intent for routing.
 
-    The upgraded classifier also predicts complexity, tool needs, and
-    whether LLM escalation is required. This information is used to
-    decide routing:
-      - High confidence + simple + no planning → ReAct (bypass LLM)
-      - High confidence + planning needed → Planner
-      - Low confidence → fall through to heuristic router
+    When micro-models are enabled:
+      1. Intent classifier predicts category + confidence
+      2. Tool selector predicts required tools
+      3. If confidence >= threshold, use predictions; otherwise fall through
+
+    When disabled, falls through to the heuristic router (Phase 1 stand-in).
 
     Args:
         request: The user's natural-language request.
@@ -75,20 +74,24 @@ def classify_request(request: str) -> Intent:
         threshold = settings.model.micro_model_confidence_threshold
 
         if not should_use_llm(result, threshold=threshold):
+            # Run tool selector when micro-model is confident.
+            predicted_tools: list[str] | None = None
+            try:
+                tool_preds = predict_tool_names(request)
+                if tool_preds:
+                    predicted_tools = tool_preds
+            except Exception:
+                logger.debug("tool selector unavailable, continuing without it", exc_info=True)
+
             logger.debug(
-                "micro-model classified '%s' as '%s' (conf=%.3f, complexity=%s, plan=%s, llm=%s)",
+                "micro-model classified '%s' as '%s' (conf=%.3f, tools=%s)",
                 request[:60],
                 result.category,
                 result.confidence,
-                result.complexity,
-                result.requires_planning,
-                result.requires_llm,
+                predicted_tools,
             )
 
-            # Even with high confidence, simple requests that need a tool
-            # still go through ReAct (not Planner). The micro-model handles
-            # intent; the agent handles execution.
-            return _classifier_to_intent(result)
+            return _classifier_to_intent(result, predicted_tools=predicted_tools)
 
         logger.info(
             "micro-model confidence too low (%.3f < %.2f) for '%s' — falling through",

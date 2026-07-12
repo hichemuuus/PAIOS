@@ -1,37 +1,39 @@
 /** The PAIOS wordmark + mark. */
-export function Logo({ size = 28 }: { size?: number }) {
+
+export function Logo({ size = 30 }: { size?: number }) {
   return (
     <div className="flex items-center gap-2.5">
       <Mark size={size} />
       <div className="leading-none">
-        <div className="font-mono text-sm font-semibold tracking-[0.28em] text-gray-100">
-          PAIOS
+        <div className="font-display text-[1.15rem] font-semibold tracking-[-0.01em] text-ink-900">
+          Paios
         </div>
-        <div className="hud-label mt-0.5 text-[9px]">AI OPERATING SYSTEM</div>
+        <div className="hud-label mt-1 text-[9px]">personal ai</div>
       </div>
     </div>
   )
 }
 
-export function Mark({ size = 28 }: { size?: number }) {
+export function Mark({ size = 30 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
-      <rect width="32" height="32" rx="7" fill="#0a0f18" />
-      <rect
-        x="0.5"
-        y="0.5"
-        width="31"
-        height="31"
-        rx="6.5"
-        fill="none"
-        stroke="#1ed3f4"
-        strokeOpacity="0.4"
-      />
+      <defs>
+        <linearGradient id="paios-mark" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#D17E58" />
+          <stop offset="100%" stopColor="#A94A2D" />
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" rx="9" fill="url(#paios-mark)" />
+      {/* A stylized "P" companion glyph — open, friendly arc + node. */}
       <path
-        d="M8 21 L8 11 L12 11 L16 17 L20 11 L24 11 L24 21 L21 21 L21 15 L17 21 L15 21 L11 15 L11 21 Z"
-        fill="#52e6ff"
+        d="M11 23 L11 9 L17.5 9 C20.5 9 22.5 11 22.5 13.8 C22.5 16.6 20.5 18.6 17.5 18.6 L11 18.6"
+        fill="none"
+        stroke="#FBF8F3"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle cx="16" cy="7" r="1.6" fill="#16c089" />
+      <circle cx="22.5" cy="22.5" r="2.1" fill="#FBF8F3" opacity="0.92" />
     </svg>
   )
 }
