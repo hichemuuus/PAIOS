@@ -13,18 +13,18 @@ Covers:
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
+from veyron.intelligence.parameter_extraction.evaluation import ParameterExtractionEvaluator
+from veyron.intelligence.parameter_extraction.model import ParameterExtractionModel
+from veyron.intelligence.tool_selector.model import ToolSelectorModel
 
 from benchmarks.intelligence_benchmark import (
     BenchmarkConfig,
     _detect_regressions,
     _domain_to_expected_tools,
     _heuristic_intent_from_domain,
-    _load_param_extraction,
-    _load_tool_selector,
     _run_intent_benchmark,
     _run_latency_benchmark,
     _run_param_extraction_benchmark,
@@ -33,10 +33,6 @@ from benchmarks.intelligence_benchmark import (
     run_benchmark,
     run_mode,
 )
-from paios.intelligence.parameter_extraction.evaluation import ParameterExtractionEvaluator
-from paios.intelligence.parameter_extraction.model import ParameterExtractionModel
-from paios.intelligence.tool_selector.model import ToolSelectorModel
-
 
 # ═══════════════════════════════════════════════════════════════════
 # Dataset loading

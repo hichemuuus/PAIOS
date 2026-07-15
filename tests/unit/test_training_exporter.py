@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from paios.intelligence.training.dataset import TrainingDataset, TrainingExample
-from paios.intelligence.training.exporter import TrainingExporter, get_exporter, reset_exporter
+from veyron.intelligence.training.dataset import TrainingDataset, TrainingExample
+from veyron.intelligence.training.exporter import TrainingExporter, get_exporter, reset_exporter
 
 
 def _make_dataset(size: int = 3) -> TrainingDataset:

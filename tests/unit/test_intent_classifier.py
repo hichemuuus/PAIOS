@@ -6,20 +6,19 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
-from paios.intelligence.intent.dataset import (
+from veyron.intelligence.intent.dataset import (
     CATEGORY_TO_DOMAIN,
     CATEGORY_TO_MODE,
     IntentDataset,
 )
-from paios.intelligence.intent.inference import (
+from veyron.intelligence.intent.inference import (
     ClassifierResult,
     classify_intent,
     reset_model,
     should_use_llm,
 )
-from paios.intelligence.intent.model import IntentModel
-from paios.intelligence.intent.trainer import train_model
+from veyron.intelligence.intent.model import IntentModel
+from veyron.intelligence.intent.trainer import train_model
 
 
 class TestIntentModel:

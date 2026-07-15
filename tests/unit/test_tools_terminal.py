@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.security.command_policy import PermissionLevel
-from paios.tools.base import ToolContext
-from paios.tools.terminal import TerminalTool
+from veyron.security.command_policy import PermissionLevel
+from veyron.tools.base import ToolContext
+from veyron.tools.terminal import TerminalTool
 
 
 class TestTerminalTool:

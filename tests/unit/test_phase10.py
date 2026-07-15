@@ -16,34 +16,30 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-from paios.intelligence.models.registry import ModelRegistry, get_registry, reset_registry
-from paios.intelligence.models.schema import (
-    ModelMetadata,
+from veyron.intelligence.models.registry import ModelRegistry, get_registry, reset_registry
+from veyron.intelligence.models.schema import (
     STATUS_CANDIDATE,
     STATUS_DEPRECATED,
     STATUS_PRODUCTION,
+    ModelMetadata,
 )
-from paios.intelligence.training.dataset import (
-    TrainingExample,
+from veyron.intelligence.training.dataset import (
     TrainingDataset,
+    TrainingExample,
     UserInteraction,
     load_user_interactions,
     save_user_interaction,
     user_interactions_to_dataset,
 )
-from paios.intelligence.training.feedback import TrainingFeedbackLoop, _infer_intent
-from paios.intelligence.training.retrain import (
+from veyron.intelligence.training.feedback import TrainingFeedbackLoop, _infer_intent
+from veyron.intelligence.training.retrain import (
     BenchmarkComparator,
-    BenchmarkComparisonResult,
     DatasetGrowthDetector,
     NewExampleTrigger,
     RetrainingOrchestrator,
     RetrainPlan,
     RetrainResult,
-    TrainingTrigger,
 )
-
 
 # ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -304,7 +300,7 @@ class TestTrainingFeedbackLoop:
         assert isinstance(dataset, TrainingDataset)
         assert len(dataset) == 0
 
-    @patch("paios.intelligence.training.feedback.sync_session_scope")
+    @patch("veyron.intelligence.training.feedback.sync_session_scope")
     def test_collect_returns_dataset(self, mock_session_scope):
         mock_session = MagicMock()
         mock_session_scope.return_value.__enter__.return_value = mock_session
@@ -464,10 +460,10 @@ class TestTrainingDatasetExtensions:
 # ─── Inference Latency Measurement Tests ─────────────────────────────────────
 
 class TestMetricsCalculation:
-    @patch("paios.api.routes.intelligence._load_intent_model")
-    @patch("paios.api.routes.intelligence._load_ts_model")
+    @patch("veyron.api.routes.intelligence._load_intent_model")
+    @patch("veyron.api.routes.intelligence._load_ts_model")
     def test_metrics_endpoint_structure(self, mock_ts, mock_ic):
-        from paios.api.routes.intelligence import _measure_inference_latency
+        from veyron.api.routes.intelligence import _measure_inference_latency
         mock_ic.return_value = MagicMock()
         mock_ts.return_value = MagicMock()
         latency = _measure_inference_latency()

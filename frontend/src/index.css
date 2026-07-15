@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  /* ============================================================
-     Nocturne (Warm Dark) Design Tokens
+   /* ============================================================
+     Veyron Warm Dark Design Tokens
      A calm, premium dark surface — dense data console, not editorial.
      - Warm dark surfaces (no pure black)
      - Three-tier text: primary / secondary / muted
@@ -128,7 +128,7 @@ body {
 }
 
 @layer components {
-  /* Nocturne surface cards */
+  /* Surface cards */
   .panel {
     @apply rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] shadow-card;
   }

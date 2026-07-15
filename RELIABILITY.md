@@ -1,4 +1,4 @@
-# PAIOS Reliability Targets
+# Veyron Reliability Targets
 
 ## Target 1: Benchmark Success Rate >95%
 

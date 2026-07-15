@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from paios.tools.registry import get_registry, reset_registry
+from veyron.tools.registry import get_registry, reset_registry
 
 
 def test_registry_discovers_three_tools():

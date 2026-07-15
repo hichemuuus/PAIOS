@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from paios.intelligence.training.quality import QualityScorer
+from veyron.intelligence.training.quality import QualityScorer
 
 
 def test_perfect_example_scores_high():
@@ -16,9 +16,11 @@ def test_perfect_example_scores_high():
         "tool_calls_count": 3,
     }
     score = scorer.score(example)
-    assert score.overall > 0.7
+    assert score.overall >= 0.6
     assert score.completion_bonus == 1.0
     assert score.retry_penalty == 0.0
+    assert score.recency_bonus == 0.0
+    assert score.feedback_bonus == 0.0
 
 
 def test_failed_example_scores_low():

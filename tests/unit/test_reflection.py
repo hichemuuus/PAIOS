@@ -5,10 +5,9 @@ from __future__ import annotations
 import json
 
 import pytest
-
-from paios.config import get_settings, reset_settings_cache
-from paios.core.reflection import ReflectionEngine, ReflectionResult
-from paios.core.tracker import ExecutionTracker
+from veyron.config import reset_settings_cache
+from veyron.core.reflection import ReflectionEngine, ReflectionResult
+from veyron.core.tracker import ExecutionTracker
 
 
 class FakeReflectionProvider:
@@ -117,7 +116,7 @@ async def test_store_reflection_memories(fresh_db, engine):
     count = engine.store_reflection_memories(ref)
     assert count == 2
 
-    from paios.memory.store import get_memory_store, reset_memory_store
+    from veyron.memory.store import get_memory_store, reset_memory_store
     reset_memory_store()
     store = get_memory_store()
     memories = store.search("")

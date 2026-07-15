@@ -3,11 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-import time
 
-import pytest
-
-from paios.tools.base import FailureCategory, Tool, ToolContext, ToolResult, classify_failure
+from veyron.tools.base import FailureCategory, Tool, ToolContext, ToolResult, classify_failure
 
 
 class TestFailureClassification:

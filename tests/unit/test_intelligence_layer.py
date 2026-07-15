@@ -13,12 +13,11 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
-from paios.config import get_settings, reset_settings_cache
-from paios.core.intelligence import classify_request
-from paios.intelligence.intent.inference import reset_model
-from paios.intelligence.intent.model import IntentModel
-from paios.llm.micro.router import INTENT_CATEGORIES, Intent
+from veyron.config import get_settings, reset_settings_cache
+from veyron.core.intelligence import classify_request
+from veyron.intelligence.intent.inference import reset_model
+from veyron.intelligence.intent.model import IntentModel
+from veyron.llm.micro.router import INTENT_CATEGORIES, Intent
 
 
 @pytest.fixture(autouse=True)
@@ -74,7 +73,7 @@ class TestIntelligenceLayerEnabled:
 
     def test_enabled_with_trained_model_high_confidence(self, monkeypatch):
         """With a trained model and high confidence, the classifier result is used."""
-        from paios.intelligence.intent.inference import classify_intent
+        from veyron.intelligence.intent.inference import classify_intent
 
         monkeypatch.setattr(
             get_settings().model, "micro_model_confidence_threshold", 0.3
@@ -146,7 +145,7 @@ class TestClassifierResultFields:
     """Phase 2: ClassifierResult includes complexity/planning/LLM fields."""
 
     def test_fallback_result_has_all_fields(self):
-        from paios.intelligence.intent.inference import classify_intent, reset_model
+        from veyron.intelligence.intent.inference import classify_intent, reset_model
         reset_model()
         result = classify_intent("What is the CPU usage?")
         assert hasattr(result, "complexity")
@@ -159,7 +158,7 @@ class TestClassifierResultFields:
         assert isinstance(result.requires_llm, bool)
 
     def test_fallback_routing_decision(self):
-        from paios.intelligence.intent.inference import classify_intent, reset_model
+        from veyron.intelligence.intent.inference import classify_intent, reset_model
         reset_model()
         result = classify_intent("Read the file README.md")
         assert result.category == "file_operation"
@@ -168,7 +167,7 @@ class TestClassifierResultFields:
         assert result.requires_planning is False
 
     def test_fallback_planning_routing(self):
-        from paios.intelligence.intent.inference import classify_intent, reset_model
+        from veyron.intelligence.intent.inference import classify_intent, reset_model
         reset_model()
         result = classify_intent("First do this step, then do that, after that finally do the next step")
         assert result.category == "planning_task"
@@ -176,24 +175,23 @@ class TestClassifierResultFields:
         assert result.requires_planning is True
 
     def test_fallback_llm_escalation_on_low_confidence(self, monkeypatch):
-        from paios.intelligence.intent.inference import classify_intent, reset_model
-        from paios.config import get_settings
+        from veyron.config import get_settings
+        from veyron.intelligence.intent.inference import classify_intent, reset_model
         reset_model()
         monkeypatch.setattr(get_settings().model, "micro_model_confidence_threshold", 0.9)
         result = classify_intent("What is the CPU usage?")
         assert result.requires_llm is True  # confidence 0.6 < 0.9
 
     def test_fallback_no_llm_on_high_confidence(self, monkeypatch):
-        from paios.intelligence.intent.inference import classify_intent, reset_model
-        from paios.config import get_settings
+        from veyron.config import get_settings
+        from veyron.intelligence.intent.inference import classify_intent, reset_model
         reset_model()
         monkeypatch.setattr(get_settings().model, "micro_model_confidence_threshold", 0.3)
         result = classify_intent("What is the CPU usage?")
         assert result.requires_llm is False  # confidence 0.6 >= 0.3
 
     def test_intent_routing_uses_complexity(self):
-        from paios.core.intelligence import classify_request
-        from paios.config import get_settings
+        from veyron.core.intelligence import classify_request
         intent = classify_request("Say hello")
         assert isinstance(intent.mode, str)
 
@@ -202,15 +200,15 @@ class TestToolSelectionPrep:
     """Tests for tool selection preparation (no training yet)."""
 
     def test_seed_dataset_generates_examples(self):
-        from paios.intelligence.tool_selector.dataset import ToolSelectionDataset
-        from paios.intelligence.tool_selector.schema import ToolSelectionExample
+        from veyron.intelligence.tool_selector.dataset import ToolSelectionDataset
+        from veyron.intelligence.tool_selector.schema import ToolSelectionExample
 
         dataset = ToolSelectionDataset.generate_seed()
         assert len(dataset) > 0
         assert all(isinstance(ex, ToolSelectionExample) for ex in dataset.examples)
 
     def test_seed_dataset_has_text_and_tools(self):
-        from paios.intelligence.tool_selector.dataset import ToolSelectionDataset
+        from veyron.intelligence.tool_selector.dataset import ToolSelectionDataset
 
         dataset = ToolSelectionDataset.generate_seed()
         for ex in dataset:
@@ -219,7 +217,7 @@ class TestToolSelectionPrep:
             assert ex.intent_category
 
     def test_seed_dataset_to_jsonl_and_back(self):
-        from paios.intelligence.tool_selector.dataset import ToolSelectionDataset
+        from veyron.intelligence.tool_selector.dataset import ToolSelectionDataset
 
         dataset = ToolSelectionDataset.generate_seed()
         with tempfile.NamedTemporaryFile(suffix=".jsonl", mode="w", delete=False, encoding="utf-8") as f:
@@ -235,7 +233,7 @@ class TestToolSelectionPrep:
             Path(path).unlink(missing_ok=True)
 
     def test_tool_selection_metrics(self):
-        from paios.intelligence.tool_selector.metrics import ToolSelectionMetrics
+        from veyron.intelligence.tool_selector.metrics import ToolSelectionMetrics
 
         assert ToolSelectionMetrics.tool_precision_at_k(["filesystem_read"], ["filesystem_read"], k=1) == 1.0
         assert ToolSelectionMetrics.tool_precision_at_k(["terminal"], ["filesystem_read"], k=1) == 0.0
@@ -246,7 +244,7 @@ class TestToolSelectionPrep:
         assert not ToolSelectionMetrics.exact_match(["filesystem_read"], ["system_monitor"])
 
     def test_tool_selection_tool_names(self):
-        from paios.intelligence.tool_selector.schema import available_tool_names
+        from veyron.intelligence.tool_selector.schema import available_tool_names
 
         names = available_tool_names()
         assert "filesystem_read" in names

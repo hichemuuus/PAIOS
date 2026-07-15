@@ -21,7 +21,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     // eslint-disable-next-line no-console
-    console.error('PAIOS render error:', error, info)
+        console.error('Veyron render error:', error, info)
   }
 
   reset = (): void => {

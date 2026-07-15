@@ -9,8 +9,7 @@ import os
 from pathlib import Path
 
 import pytest
-
-from paios.security.path_policy import PathPolicyError, is_within_roots, validate_path
+from veyron.security.path_policy import PathPolicyError, is_within_roots, validate_path
 
 
 def test_valid_path_inside_root(sandbox_root: Path):

@@ -17,19 +17,18 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from paios.config import DATA_DIR
-from paios.intelligence.intent.inference import ClassifierResult, classify_intent, reset_model
-from paios.intelligence.parameter_extraction.evaluation import ParameterExtractionEvaluator
-from paios.intelligence.parameter_extraction.model import ParameterExtractionModel
-from paios.intelligence.tool_selector.model import ToolSelectorModel
-from paios.llm.micro.router import route
+from veyron.config import DATA_DIR
+from veyron.intelligence.intent.inference import ClassifierResult, classify_intent, reset_model
+from veyron.intelligence.parameter_extraction.evaluation import ParameterExtractionEvaluator
+from veyron.intelligence.parameter_extraction.model import ParameterExtractionModel
+from veyron.intelligence.tool_selector.model import ToolSelectorModel
+from veyron.llm.micro.router import route
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +101,7 @@ def load_dataset(path: str | Path) -> dict[str, Any]:
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Benchmark dataset not found at {path}")
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     logger.info("Loaded benchmark dataset from %s (%d param, %d tool, %d task, %d mem_ret, %d reg)",
                 path,
@@ -122,7 +121,7 @@ def _load_intent_model(models_dir: str | Path):
     if not path.exists():
         logger.warning("Intent model not found at %s", path)
         return None
-    from paios.intelligence.intent.model import IntentModel
+    from veyron.intelligence.intent.model import IntentModel
     model = IntentModel()
     model.load(str(path))
     return model
@@ -327,10 +326,10 @@ def _run_task_success_benchmark(
             "available": False,
             "total": len(test_cases),
             "note": "Task success tests skipped — no LLM available. "
-                    "Set PAIOS_SKIP_TASK_SUCCESS=0 to enable with a working LLM.",
+                    "Set VEYRON_SKIP_TASK_SUCCESS=0 to enable with a working LLM.",
         }
 
-    from paios.core.evaluator import EvalTask, Evaluator
+    from veyron.core.evaluator import EvalTask, Evaluator
 
     evaluator = Evaluator()
     tasks = [
@@ -509,7 +508,7 @@ def _load_previous_report(output_dir: str | Path) -> dict[str, Any] | None:
     if not path.exists():
         return None
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
         logger.warning("Failed to load previous report: %s", e)
@@ -525,7 +524,7 @@ def _save_report(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     filename = f"intelligence_benchmark_{timestamp}{suffix}.json"
     path = output_dir / filename
     with open(path, "w", encoding="utf-8") as f:
@@ -550,7 +549,7 @@ def run_mode(
     previous_report: dict[str, Any] | None = None,
 ) -> ModeReport:
     """Run the full benchmark for a single mode."""
-    report = ModeReport(mode=mode, timestamp=datetime.now(timezone.utc).isoformat())
+    report = ModeReport(mode=mode, timestamp=datetime.now(UTC).isoformat())
     logger.info("=" * 60)
     logger.info("Running benchmark in '%s' mode", mode)
     logger.info("=" * 60)
@@ -741,7 +740,7 @@ def print_comparison(report: ComparisonReport) -> None:
                 lines.append(f"    Total cases:      {mm_s.get('total', 0)}")
                 for tool, tm in mm_s.get("per_tool", {}).items():
                     lines.append(f"    [{tool}] exact: {tm.get('exact_match_rate', 0):.2%}  (n={tm.get('total', 0)})")
-            lines.append(f"  Baseline:     N/A (no heuristic parameter extraction)")
+            lines.append("  Baseline:     N/A (no heuristic parameter extraction)")
 
         elif section == "task_success":
             for mode_name, mode_s in [("Micro-model", mm_s), ("Baseline", bl_s)]:

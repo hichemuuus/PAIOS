@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
-
-from paios.core.evaluator import EvalResult, EvalTask, Evaluator
-from paios.db.models import EvaluationMetric
+from veyron.core.evaluator import EvalResult, EvalTask, Evaluator
+from veyron.db.models import EvaluationMetric
 
 
 class TestEvalTask:
@@ -73,7 +70,7 @@ class FakeEvalAgent:
         self.tracker = _FakeTracker()
 
     async def run(self, prompt: str, task_public_id: str = "system"):
-        from paios.core.agent import AgentRunResult
+        from veyron.core.agent import AgentRunResult
 
         if self.fail:
             return AgentRunResult(answer="", iterations=1, error="simulated failure")
@@ -194,7 +191,7 @@ class TestEvaluator:
         )
         evaluator._store_result(result)
 
-        from paios.db.base import sync_session_scope
+        from veyron.db.base import sync_session_scope
         with sync_session_scope() as session:
             stored = session.query(EvaluationMetric).filter(EvaluationMetric.task_id == "db_test").first()
             assert stored is not None
@@ -213,7 +210,7 @@ class TestEvaluator:
         results = await evaluator.run_suite(tasks, include_memory_metrics=False)
         assert len(results) == 2
 
-        from paios.db.base import sync_session_scope
+        from veyron.db.base import sync_session_scope
         with sync_session_scope() as session:
             count = session.query(EvaluationMetric).count()
             assert count == 2

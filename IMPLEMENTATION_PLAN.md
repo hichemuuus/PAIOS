@@ -1,4 +1,4 @@
-# PAIOS — IMPLEMENTATION PLAN
+# Veyron — Implementation Plan
 
 Step-by-step build order. Each step is small, testable, and committed before
 the next begins. Phases map to `ROADMAP.md`.
@@ -18,7 +18,7 @@ Conventions:
       chromadb [added Phase 2], ollama / httpx client)
 - [ ] `.gitignore` (data/, .venv, node_modules, __pycache__, *.db)
 - [ ] `backend/data/` subtree created and gitignored
-- [ ] `backend/paios/__init__.py`, `backend/paios/config.py` (Pydantic settings)
+- [ ] `backend/veyron/__init__.py`, `backend/veyron/config.py` (Pydantic settings)
 - [ ] Sample `config.example.yaml` + `.env.example`
 - [ ] `README.md` with quickstart
 

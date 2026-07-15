@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from paios.core.evaluator import EvalTask
+from veyron.core.evaluator import EvalTask
 
 # ── Basic tasks ─────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ TASK_ECHO = EvalTask(
 
 TASK_FILE_STAT = EvalTask(
     id="basic_file_stat",
-    prompt="What is the size of the file at backend/paios/__init__.py?",
+    prompt="What is the size of the file at backend/veyron/__init__.py?",
     category="basic",
     expected_tools=["filesystem_read"],
     min_steps=1,
@@ -66,7 +66,7 @@ TASK_MULTI_STEP_SYSTEM = EvalTask(
 
 TASK_FILE_ANALYSIS = EvalTask(
     id="intermediate_file_analysis",
-    prompt="Read the file backend/paios/__init__.py and tell me what version it says",
+    prompt="Read the file backend/veyron/__init__.py and tell me what version it says",
     category="intermediate",
     expected_tools=["filesystem_read"],
     min_steps=1,
@@ -84,7 +84,7 @@ TASK_PLAN_DEP = EvalTask(
 
 TASK_TOOL_RECOVERY = EvalTask(
     id="intermediate_tool_recovery",
-    prompt="Read the file /nonexistent/path/foo.txt, and if it fails, read the file backend/paios/__init__.py instead",
+    prompt="Read the file /nonexistent/path/foo.txt, and if it fails, read the file backend/veyron/__init__.py instead",
     category="intermediate",
     expected_tools=["filesystem_read", "filesystem_read"],
     min_steps=1,
@@ -106,7 +106,7 @@ TASK_LONG_RUNNING = EvalTask(
 
 TASK_MEMORY_DEPENDENT = EvalTask(
     id="advanced_memory_dependent",
-    prompt="Remember that the project name is PAIOS. Then later in the conversation, tell me what the project name is.",
+    prompt="Remember that the project name is Veyron. Then later in the conversation, tell me what the project name is.",
     category="advanced",
     expected_tools=[],
     min_steps=1,
@@ -124,7 +124,7 @@ TASK_PERMISSION_CONTROLLED = EvalTask(
 
 TASK_COMPLEX_REPLAN = EvalTask(
     id="advanced_complex_replan",
-    prompt="List the files in the current directory, then check CPU usage, then read backend/paios/__init__.py, "
+    prompt="List the files in the current directory, then check CPU usage, then read backend/veyron/__init__.py, "
     "then summarize all findings. If any step fails, try a different approach.",
     category="advanced",
     expected_tools=["filesystem_read", "system_monitor", "filesystem_read"],

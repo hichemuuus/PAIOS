@@ -5,17 +5,16 @@ from __future__ import annotations
 import json
 
 import pytest
-
-from paios.core.planner import (
+from veyron.core.planner import (
     Plan,
-    PlanStep,
     Planner,
+    PlanStep,
     VerifierAction,
     VerifierResult,
     _format_tool_list,
     _parse_verifier_result,
 )
-from paios.llm.base import GenerateChunk, set_provider
+from veyron.llm.base import GenerateChunk, set_provider
 
 
 class TestPlanStep:

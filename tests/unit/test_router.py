@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from paios.llm.micro.router import Intent, route
+from veyron.llm.micro.router import Intent, route
 
 
 class TestRouter:

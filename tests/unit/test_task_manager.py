@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.core.task_manager import TaskManager, get_task_manager, reset_task_manager
-from paios.db.base import sync_session_scope
-from paios.db.models import Task, TaskStatus
+from veyron.core.task_manager import get_task_manager, reset_task_manager
+from veyron.db.base import sync_session_scope
+from veyron.db.models import Task, TaskStatus
 
 
 @pytest.fixture(autouse=True)

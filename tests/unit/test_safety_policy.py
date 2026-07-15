@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-import pytest
-
-from paios.config import ApprovalMode, RiskLevel
-from paios.security.command_policy import PermissionLevel
-from paios.security.policy import SafetyPolicy, classify_risk, get_safety_policy, reset_safety_policy
+from veyron.config import ApprovalMode, RiskLevel
+from veyron.security.command_policy import PermissionLevel
+from veyron.security.policy import (
+    SafetyPolicy,
+    classify_risk,
+    get_safety_policy,
+    reset_safety_policy,
+)
 
 
 class TestClassifyRisk:
@@ -173,7 +176,7 @@ class TestSafetyPolicyIntegration:
     """Integration with tool base — confirm hook and rejection."""
 
     async def test_safe_run_denies_critical(self):
-        from paios.tools.base import Tool, ToolContext, ToolResult, cls_self_validate
+        from veyron.tools.base import Tool, ToolContext, ToolResult
 
         class DangerousTool(Tool):
             name = "dangerous"
@@ -190,7 +193,7 @@ class TestSafetyPolicyIntegration:
         assert "CRITICAL" in result.error
 
     async def test_safe_run_with_confirm_hook(self):
-        from paios.tools.base import Tool, ToolContext, ToolResult
+        from veyron.tools.base import Tool, ToolContext, ToolResult
 
         class MediumTool(Tool):
             name = "memory_store"
@@ -214,7 +217,7 @@ class TestSafetyPolicyIntegration:
         assert confirmed, "confirm hook should have been called"
 
     async def test_safe_run_confirm_hook_denies(self):
-        from paios.tools.base import Tool, ToolContext, ToolResult
+        from veyron.tools.base import Tool, ToolContext, ToolResult
 
         class MediumTool(Tool):
             name = "memory_store"
@@ -235,7 +238,7 @@ class TestSafetyPolicyIntegration:
         assert "denied by user" in result.error
 
     async def test_low_risk_tool_skips_confirm(self):
-        from paios.tools.base import Tool, ToolContext, ToolResult
+        from veyron.tools.base import Tool, ToolContext, ToolResult
 
         class SafeTool(Tool):
             name = "filesystem_read"

@@ -72,9 +72,9 @@ function Sidebar() {
 
       <div className="px-3 pb-5">
         <div className="rounded-xl border border-ink-200/70 bg-cream/50 p-3.5">
-          <div className="font-display text-sm font-medium text-ink-800">Your companion</div>
+          <div className="font-display text-sm font-medium text-ink-800">Your workflow</div>
           <p className="mt-1 text-[11px] leading-relaxed text-ink-500">
-            Describe a goal, and Paios plans, acts, and verifies — then remembers.
+            Describe a goal, and Veyron plans, acts, and verifies — then remembers.
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@ function Header() {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-ink-200/80 bg-paper/70 px-6 backdrop-blur">
       <div className="flex items-center gap-2">
-        <span className="hud-label text-ink-400">Paios · Personal AI</span>
+        <span className="hud-label text-ink-400">Veyron</span>
       </div>
       <div className="flex items-center gap-3">
         <Clock />

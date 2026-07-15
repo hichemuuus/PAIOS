@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.db.models import MemoryCategory
-from paios.memory.store import MemoryStore, get_memory_store, reset_memory_store
+from veyron.db.models import MemoryCategory
+from veyron.memory.store import get_memory_store, reset_memory_store
 
 pytestmark = pytest.mark.usefixtures("fresh_db")
 

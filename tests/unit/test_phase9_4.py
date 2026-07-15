@@ -3,31 +3,29 @@
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
-
-from paios.config import DATA_DIR, get_settings, reset_settings_cache
-from paios.intelligence.intent.inference import (
+from veyron.config import DATA_DIR, get_settings, reset_settings_cache
+from veyron.intelligence.intent.inference import (
     ClassifierResult,
     classify_intent,
     reset_model,
     should_use_llm,
 )
-from paios.intelligence.intent.model import IntentModel
-from paios.intelligence.tool_selector.inference import (
+from veyron.intelligence.intent.model import IntentModel
+from veyron.intelligence.tool_selector.inference import (
     predict_tool_names,
     predict_tools,
+)
+from veyron.intelligence.tool_selector.inference import (
     reset_model as reset_ts_model,
 )
-from paios.intelligence.tool_selector.model import ToolSelectorModel
-from paios.intelligence.training.benchmark_v2 import BenchmarkV2
-from paios.intelligence.training.dataset import TrainingDataset, TrainingExample
-from paios.intelligence.training.evaluation import IntentEvaluator, ToolSelectorEvaluator
-from paios.intelligence.training.trainer_v2 import TrainingPipelineV2
-from paios.intelligence.training.preparation.splitter import load_jsonl_as_examples
-
+from veyron.intelligence.tool_selector.model import ToolSelectorModel
+from veyron.intelligence.training.benchmark_v2 import BenchmarkV2
+from veyron.intelligence.training.dataset import TrainingDataset, TrainingExample
+from veyron.intelligence.training.preparation.splitter import load_jsonl_as_examples
+from veyron.intelligence.training.trainer_v2 import TrainingPipelineV2
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -415,21 +413,25 @@ class TestRuntimeIntegration:
         assert settings.model.micro_models_enabled is False
 
     def test_classify_request_returns_intent(self):
-        from paios.core.intelligence import classify_request
-        from paios.llm.micro.router import Intent
+        from veyron.core.intelligence import classify_request
+        from veyron.llm.micro.router import Intent
         intent = classify_request("What is the CPU usage?")
         assert isinstance(intent, Intent)
         assert intent.confidence > 0.0
         assert intent.mode in ("react", "plan")
 
     def test_intent_has_predicted_tools_field(self):
-        from paios.llm.micro.router import Intent
+        from veyron.llm.micro.router import Intent
         intent = Intent(mode="react", domain="general", confidence=0.9)
         assert hasattr(intent, "predicted_tools")
         assert intent.predicted_tools is None
 
     def test_tool_selector_inference_imports(self):
-        from paios.intelligence.tool_selector import predict_tool_names, predict_tools, reset_ts_model
+        from veyron.intelligence.tool_selector import (
+            predict_tool_names,
+            predict_tools,
+            reset_ts_model,
+        )
         assert callable(predict_tool_names)
         assert callable(predict_tools)
         assert callable(reset_ts_model)
@@ -439,16 +441,15 @@ class TestRuntimeIntegration:
 
 class TestParameterExtraction:
     def test_parameter_schema_defined(self):
-        from paios.intelligence.parameter_extraction.schema import (
+        from veyron.intelligence.parameter_extraction.schema import (
             TOOL_PARAMETER_SCHEMAS,
-            ParameterExample,
         )
         assert len(TOOL_PARAMETER_SCHEMAS) >= 4
         assert "filesystem_read" in TOOL_PARAMETER_SCHEMAS
         assert "terminal" in TOOL_PARAMETER_SCHEMAS
 
     def test_parameter_example_creation(self):
-        from paios.intelligence.parameter_extraction.schema import ParameterExample
+        from veyron.intelligence.parameter_extraction.schema import ParameterExample
         ex = ParameterExample(
             request="list files in src",
             tool_name="filesystem_read",
@@ -458,7 +459,7 @@ class TestParameterExtraction:
         assert ex.expected_parameters["path"] == "src"
 
     def test_parameter_dataset_load(self):
-        from paios.intelligence.parameter_extraction.dataset import ParameterExtractionDataset
+        from veyron.intelligence.parameter_extraction.dataset import ParameterExtractionDataset
         path = DATA_DIR / "training" / "synthetic_training_data.jsonl"
         if not path.exists():
             pytest.skip("synthetic data not found")
@@ -469,9 +470,8 @@ class TestParameterExtraction:
         assert "tools" in summary
 
     def test_parameter_evaluation_placeholder(self):
-        from paios.intelligence.parameter_extraction.evaluation import (
+        from veyron.intelligence.parameter_extraction.evaluation import (
             ParameterExtractionEvaluator,
-            ParameterEvalResult,
         )
         evaluator = ParameterExtractionEvaluator()
         result = evaluator.evaluate([], [])

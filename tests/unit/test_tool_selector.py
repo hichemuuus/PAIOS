@@ -6,11 +6,10 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
-from paios.intelligence.tool_selector.dataset import ToolSelectionDataset
-from paios.intelligence.tool_selector.metrics import ToolSelectionMetrics
-from paios.intelligence.tool_selector.model import ToolSelectorModel
-from paios.intelligence.tool_selector.trainer import train_tool_selector
+from veyron.intelligence.tool_selector.dataset import ToolSelectionDataset
+from veyron.intelligence.tool_selector.metrics import ToolSelectionMetrics
+from veyron.intelligence.tool_selector.model import ToolSelectorModel
+from veyron.intelligence.tool_selector.trainer import train_tool_selector
 
 
 class TestToolSelectorModel:
@@ -155,13 +154,13 @@ class TestToolSelectorMetrics:
         )
 
     def test_missing_parameters_penalty_none(self):
-        from paios.intelligence.tool_selector.schema import ToolPrediction
+        from veyron.intelligence.tool_selector.schema import ToolPrediction
 
         pred = ToolPrediction(tool_name="filesystem_read", confidence=0.9)
         assert ToolSelectionMetrics.missing_parameters_penalty(pred) == 0.0
 
     def test_missing_parameters_penalty_partial(self):
-        from paios.intelligence.tool_selector.schema import ToolPrediction
+        from veyron.intelligence.tool_selector.schema import ToolPrediction
 
         pred = ToolPrediction(
             tool_name="filesystem_read",

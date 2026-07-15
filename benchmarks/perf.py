@@ -10,11 +10,10 @@ import time
 from pathlib import Path
 from statistics import mean, median, stdev
 
-from paios.core.planner import Plan, PlanStep, Planner
-from paios.memory.store import get_memory_store, reset_memory_store
-from paios.security.command_policy import classify_command
-from paios.security.path_policy import validate_path
-from paios.security.policy import classify_risk
+from veyron.core.planner import Plan, Planner, PlanStep
+from veyron.memory.store import get_memory_store, reset_memory_store
+from veyron.security.command_policy import classify_command
+from veyron.security.policy import classify_risk
 
 
 def _measure(label: str, fn, iterations: int = 100, warmup: int = 10) -> dict:
@@ -75,9 +74,10 @@ def measure_security() -> list[dict]:
 
 
 def measure_memory() -> list[dict]:
-    from paios.db.base import init_db, reset_sync_engine
-    from paios import config as config_module
     import tempfile
+
+    from veyron import config as config_module
+    from veyron.db.base import init_db, reset_sync_engine
 
     # Isolate DB with a temp directory
     tmp = tempfile.mkdtemp()
@@ -186,7 +186,7 @@ def print_results(results: list[dict]) -> None:
 
 def main() -> None:
     print("=" * 93)
-    print("PAIOS Performance Measurement")
+    print("Veyron Performance Measurement")
     print("=" * 93)
     print()
     print("Security module...")

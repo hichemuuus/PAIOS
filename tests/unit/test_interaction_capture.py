@@ -11,13 +11,12 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
-from paios.intelligence.training.dataset import (
+from veyron.intelligence.training.dataset import (
     UserInteraction,
     load_user_interactions,
     save_user_interaction,
 )
-from paios.llm.micro.router import Intent
+from veyron.llm.micro.router import Intent
 
 
 def test_intent_dataclass_has_intent_category_not_category():

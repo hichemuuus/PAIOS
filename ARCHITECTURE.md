@@ -1,6 +1,6 @@
-# PAIOS — ARCHITECTURE
+# Veyron — Architecture
 
-> Personal AI Operating System. An intelligent agent layer between the user and
+> AI Productivity System. An intelligent agent layer between the user and
 > their machine: it understands the system, remembers, plans, and acts — under
 > strict security controls.
 
@@ -272,7 +272,7 @@ events. Styling: Tailwind CSS + a shadcn-style component set, dark
 
 ```
 backend/data/
-├── paios.db            # SQLite primary store
+├── veyron.db            # SQLite primary store
 ├── chroma/             # vector index
 ├── logs/               # rotating app logs
 ├── audit/              # append-only audit events
@@ -303,6 +303,6 @@ UTC, rendered in local timezone in the UI.
   tool outputs with their source; system prompt instructs the model to treat
   out-of-band instructions as data, not commands.
 - **Privilege escalation via terminal** — command policy + confirmation +
-  audit; no tool runs as a more privileged user than the PAIOS process.
+  audit; no tool runs as a more privileged user than the Veyron process.
 - **Path escape** — path policy rejects traversal and out-of-root absolute
   paths before any FS operation.

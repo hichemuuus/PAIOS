@@ -15,10 +15,11 @@ import time
 from pathlib import Path
 from typing import Any
 
-from benchmarks.tasks import ADVANCED_TASKS, BASIC_TASKS, INTERMEDIATE_TASKS, ALL_TASKS
-from paios.core.agent import Agent
-from paios.core.evaluator import EvalTask, Evaluator
-from paios.db.base import init_db
+from veyron.core.agent import Agent
+from veyron.core.evaluator import EvalTask, Evaluator
+from veyron.db.base import init_db
+
+from benchmarks.tasks import ADVANCED_TASKS, ALL_TASKS, BASIC_TASKS, INTERMEDIATE_TASKS
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("benchmarks")
@@ -100,7 +101,7 @@ async def run_benchmarks(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="PAIOS Benchmark Runner")
+    parser = argparse.ArgumentParser(description="Veyron Benchmark Runner")
     parser.add_argument(
         "--suite",
         default="basic",

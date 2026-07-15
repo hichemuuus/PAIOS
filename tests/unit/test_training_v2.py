@@ -6,19 +6,17 @@ import json
 from pathlib import Path
 
 import pytest
-
-from paios.intelligence.intent.model import IntentModel
-from paios.intelligence.tool_selector.model import ToolSelectorModel
-from paios.intelligence.training.dataset import TrainingDataset, TrainingExample
-from paios.intelligence.training.evaluation import (
+from veyron.intelligence.intent.model import IntentModel
+from veyron.intelligence.tool_selector.model import ToolSelectorModel
+from veyron.intelligence.training.dataset import TrainingDataset, TrainingExample
+from veyron.intelligence.training.evaluation import (
     IntentEvalReport,
     IntentEvaluator,
     ModelComparison,
     ToolSelectorEvalReport,
     ToolSelectorEvaluator,
 )
-from paios.intelligence.training.trainer_v2 import TrainingPipelineV2
-
+from veyron.intelligence.training.trainer_v2 import TrainingPipelineV2
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -227,7 +225,7 @@ def test_train_all_returns_both(mini_dataset: TrainingDataset):
 
 
 def test_train_with_explicit_test_set(mini_dataset: TrainingDataset):
-    splitter = __import__("paios.intelligence.training.preparation.splitter", fromlist=["DatasetSplitter"]).DatasetSplitter()
+    splitter = __import__("veyron.intelligence.training.preparation.splitter", fromlist=["DatasetSplitter"]).DatasetSplitter()
     train, test = splitter.stratified_split(mini_dataset, seed=42)
     pipeline = TrainingPipelineV2()
     model, report = pipeline.train_intent(train, test_dataset=test)

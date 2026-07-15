@@ -8,12 +8,9 @@ request → tool call → tool execution → result → final answer.
 from __future__ import annotations
 
 import pytest
-
-from paios.core.agent import Agent, get_agent, reset_agent
-from paios.core.events import get_bus, reset_bus
-from paios.db.base import init_db
-from paios.llm.base import set_provider
-from paios.tools.registry import get_registry, reset_registry
+from veyron.core.agent import Agent, get_agent
+from veyron.core.events import get_bus
+from veyron.llm.base import set_provider
 
 
 @pytest.fixture(autouse=True)
@@ -50,7 +47,7 @@ class TestAgentReActLoop:
     async def test_direct_answer_no_tool(self, stub_provider):
         """Agent should pass through a final answer without tool calls."""
         provider = stub_provider([
-            "Hello! I'm PAIOS. How can I help you today?",
+            "Hello! I'm Veyron. How can I help you today?",
         ])
         set_provider(provider)
         agent = get_agent()
@@ -150,7 +147,7 @@ class TestAgentReActLoop:
                 return False
 
             async def generate_stream(self, messages, opts):
-                from paios.llm.base import LLMUnavailableError
+                from veyron.llm.base import LLMUnavailableError
                 raise LLMUnavailableError("model not reachable")
                 if False:  # pragma: no cover
                     yield  # make this an async generator
@@ -184,7 +181,7 @@ class TestAgentReActLoop:
 
     async def test_tracker_records_tool_calls(self, stub_provider):
         """Tracker should have entries for tool calls after a run."""
-        from paios.core.tracker import ExecutionTracker
+        from veyron.core.tracker import ExecutionTracker
 
         provider = stub_provider([
             {"name": "filesystem_read", "arguments": {"operation": "list_dir", "path": "."}},

@@ -1,4 +1,4 @@
-# PAIOS — ROADMAP
+# Veyron — Roadmap
 
 High-level milestones. Detailed step-by-step plan is in `IMPLEMENTATION_PLAN.md`.
 
@@ -72,18 +72,18 @@ zero raw API calls; confirmations and live updates work in real time.
 
 ## Phase 4 — Advanced *(proactive, automated, personalized)*
 
-**Goal:** PAIOS acts less like a responder and more like an operator.
+**Goal:** Veyron acts less like a responder and more like an operator.
 
 Deliverables:
 - Remaining Tier-1 micro-models: tool selector, memory importance scorer
-- LoRA fine-tuning path for a small open transformer on PAIOS-specific data
+- LoRA fine-tuning path for a small open transformer on Veyron-specific data
 - Proactive assistance: event-driven suggestions (e.g. high CPU → offer
   diagnosis; stale project → offer analysis)
 - Automation / scheduled tasks (cron-like triggers)
 - Voice I/O (optional)
 - Optional: Tauri desktop wrapper (system tray, global hotkey)
 
-**Exit criteria:** PAIOS volunteers useful actions without being prompted;
+**Exit criteria:** Veyron volunteers useful actions without being prompted;
 scheduled jobs run reliably; voice path works end-to-end where implemented.
 
 ---

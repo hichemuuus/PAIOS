@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.security.command_policy import PermissionLevel
-from paios.tools.base import ToolContext
-from paios.tools.system_monitor import SystemMonitorTool
+from veyron.security.command_policy import PermissionLevel
+from veyron.tools.base import ToolContext
+from veyron.tools.system_monitor import SystemMonitorTool
 
 
 class TestSystemMonitorTool:

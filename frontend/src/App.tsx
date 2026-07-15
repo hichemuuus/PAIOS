@@ -10,12 +10,14 @@ import { ToolCenterPage } from './pages/ToolCenter'
 import { ProjectIntelligencePage } from './pages/ProjectIntelligence'
 import { MemoryCenterPage } from './pages/MemoryCenter'
 import { SystemIntelligencePage } from './pages/SystemIntelligence'
+import { TauriBridge } from './components/tauri/TauriBridge'
 
 export function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <ScrollToTop />
+        <TauriBridge />
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<DashboardPage />} />

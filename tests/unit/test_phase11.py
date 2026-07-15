@@ -12,25 +12,20 @@ Covers:
 from __future__ import annotations
 
 import json
-import tempfile
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-from paios.intelligence.parameter_extraction.dataset import ParameterExtractionDataset
-from paios.intelligence.parameter_extraction.model import ParameterExtractionModel
-from paios.intelligence.parameter_extraction.trainer import train_parameter_extraction
-from paios.intelligence.parameter_extraction.inference import (
+from veyron.intelligence.models.registry import ModelRegistry
+from veyron.intelligence.models.schema import STATUS_PRODUCTION, ModelMetadata
+from veyron.intelligence.parameter_extraction.dataset import ParameterExtractionDataset
+from veyron.intelligence.parameter_extraction.inference import (
     predict_parameters,
     predict_parameters_multitool,
     reset_model,
 )
-from paios.intelligence.parameter_extraction.schema import ParameterExample
-from paios.intelligence.scheduler import IntelligenceScheduler
-from paios.intelligence.models.registry import ModelRegistry
-from paios.intelligence.models.schema import ModelMetadata, STATUS_PRODUCTION, STATUS_CANDIDATE
-
+from veyron.intelligence.parameter_extraction.model import ParameterExtractionModel
+from veyron.intelligence.parameter_extraction.schema import ParameterExample
+from veyron.intelligence.parameter_extraction.trainer import train_parameter_extraction
+from veyron.intelligence.scheduler import IntelligenceScheduler
 
 # ═══════════════════════════════════════════════════════════════════
 # ParameterExtractionModel
@@ -209,7 +204,7 @@ class TestPredictParametersInference:
 
     def test_reset_model(self):
         reset_model()
-        from paios.intelligence.parameter_extraction.inference import _model, _model_path
+        from veyron.intelligence.parameter_extraction.inference import _model, _model_path
         assert _model is None
         assert _model_path is None
 

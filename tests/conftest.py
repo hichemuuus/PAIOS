@@ -6,23 +6,19 @@ sandbox root so nothing touches the user's real filesystem.
 
 from __future__ import annotations
 
-import os
-import tempfile
 from pathlib import Path
-from typing import AsyncIterator
 
 import pytest
-
-from paios import config as config_module
+from veyron import config as config_module
 
 
 @pytest.fixture(autouse=True)
 def isolated_data_dir(tmp_path_factory, monkeypatch):
     """Redirect backend/data to a tmp dir for every test."""
-    tmp = tmp_path_factory.mktemp("paios_data")
+    tmp = tmp_path_factory.mktemp("veyron_data")
     monkeypatch.setattr(config_module, "DATA_DIR", tmp)
     # Also patch where audit/db files are written.
-    from paios.security import audit as audit_module
+    from veyron.security import audit as audit_module
 
     monkeypatch.setattr(audit_module, "AUDIT_DIR", tmp / "audit")
     yield tmp
@@ -41,12 +37,12 @@ def settings_with_sandbox(sandbox_root, monkeypatch):
     """Force settings to use only the temp sandbox root."""
     import json
 
-    from paios.config import get_settings, reset_settings_cache
+    from veyron.config import get_settings, reset_settings_cache
 
     reset_settings_cache()
-    monkeypatch.setenv("PAIOS_SECURITY__SANDBOX_ROOTS", json.dumps([str(sandbox_root)]))
+    monkeypatch.setenv("VEYRON_SECURITY__SANDBOX_ROOTS", json.dumps([str(sandbox_root)]))
     # Re-import path policy so it picks up new settings on next validate.
-    from paios.security import path_policy
+    from veyron.security import path_policy
 
     monkeypatch.setattr(path_policy, "_load_roots", lambda: [sandbox_root.resolve()])
     get_settings.cache_clear()
@@ -57,13 +53,13 @@ def settings_with_sandbox(sandbox_root, monkeypatch):
 @pytest.fixture(autouse=True)
 def reset_singletons():
     """Reset all process-wide singletons between tests."""
-    from paios.tools.registry import reset_registry
-    from paios.core.events import reset_bus
-    from paios.security.confirmations import reset_manager
-    from paios.llm.base import reset_provider
-    from paios.core.agent import reset_agent
-    from paios.core.task_manager import reset_task_manager
-    from paios.db.base import reset_sync_engine
+    from veyron.core.agent import reset_agent
+    from veyron.core.events import reset_bus
+    from veyron.core.task_manager import reset_task_manager
+    from veyron.db.base import reset_sync_engine
+    from veyron.llm.base import reset_provider
+    from veyron.security.confirmations import reset_manager
+    from veyron.tools.registry import reset_registry
 
     reset_sync_engine()
     reset_registry()
@@ -85,7 +81,7 @@ def reset_singletons():
 @pytest.fixture
 def fresh_db(isolated_data_dir):
     """Initialize an isolated SQLite DB."""
-    from paios.db.base import init_db, get_sync_engine
+    from veyron.db.base import get_sync_engine, init_db
 
     init_db()
     yield
@@ -116,7 +112,7 @@ class StubProvider:
         return [0.0, 0.0, 0.0]
 
     async def generate_stream(self, messages, opts):
-        from paios.llm.base import GenerateChunk
+        from veyron.llm.base import GenerateChunk
 
         idx = self.calls
         self.calls += 1

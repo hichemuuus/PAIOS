@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.core.events import Event, EventBus
+from veyron.core.events import Event, EventBus
 
 
 class TestEvent:

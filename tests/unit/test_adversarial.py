@@ -10,14 +10,12 @@ from __future__ import annotations
 import json
 
 import pytest
-
-from paios.config import get_settings
-from paios.core.agent import Agent
-from paios.core.planner import Plan, PlanStep, Planner
-from paios.memory.store import get_memory_store
-from paios.security.command_policy import PermissionLevel, classify_command
-from paios.security.policy import SafetyPolicy, classify_risk
-
+from veyron.config import get_settings
+from veyron.core.agent import Agent
+from veyron.core.planner import Plan, Planner, PlanStep
+from veyron.memory.store import get_memory_store
+from veyron.security.command_policy import PermissionLevel, classify_command
+from veyron.security.policy import SafetyPolicy, classify_risk
 
 # ── Safety adversarial tests ────────────────────────────────────────────────
 
@@ -26,7 +24,7 @@ class TestSafetyAdversarial:
 
     def test_path_traversal_outside_sandbox(self, sandbox_root):
         """Absolute path outside sandbox should be blocked."""
-        from paios.security.path_policy import validate_path, PathPolicyError
+        from veyron.security.path_policy import PathPolicyError, validate_path
 
         with pytest.raises(PathPolicyError):
             validate_path(
@@ -36,7 +34,7 @@ class TestSafetyAdversarial:
 
     def test_path_traversal_double_dot(self, sandbox_root):
         """Relative traversal outside sandbox should be blocked."""
-        from paios.security.path_policy import validate_path, PathPolicyError
+        from veyron.security.path_policy import PathPolicyError, validate_path
 
         with pytest.raises(PathPolicyError):
             validate_path(
@@ -46,7 +44,7 @@ class TestSafetyAdversarial:
 
     def test_path_inside_sandbox_allowed(self, sandbox_root):
         """Path within sandbox should be allowed."""
-        from paios.security.path_policy import validate_path
+        from veyron.security.path_policy import validate_path
 
         result = validate_path(
             str(sandbox_root / "test.txt"),
@@ -71,7 +69,7 @@ class TestSafetyAdversarial:
 
     def test_safety_policy_critical_denied_or_confirmed(self):
         """CRITICAL risk actions should never be FREE."""
-        from paios.config import ApprovalMode, RiskLevel
+        from veyron.config import ApprovalMode
 
         for mode in ApprovalMode:
             policy = SafetyPolicy(approval_mode=mode)
@@ -83,7 +81,7 @@ class TestSafetyAdversarial:
 
     def test_unknown_tool_defaults_to_medium(self):
         risk = classify_risk("nonexistent_tool_xyz", {})
-        from paios.config import RiskLevel
+        from veyron.config import RiskLevel
 
         assert risk in (RiskLevel.MEDIUM, RiskLevel.HIGH)
 
@@ -299,7 +297,7 @@ class TestAgentAdversarial:
             get_settings().security.agent_max_iterations = original
 
     def test_agent_singleton_reset(self):
-        from paios.core.agent import reset_agent, get_agent
+        from veyron.core.agent import get_agent, reset_agent
 
         a1 = get_agent()
         reset_agent()

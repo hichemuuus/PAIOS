@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import pytest
+from datetime import UTC
 
-from paios.db.base import init_db
-from paios.db.models import Task, TaskStatus, ToolInvocation
-from paios.intelligence.training.collector import TrainingDataCollector, _infer_intent
+import pytest
+from veyron.db.models import Task, TaskStatus, ToolInvocation
+from veyron.intelligence.training.collector import TrainingDataCollector, _infer_intent
 
 
 @pytest.fixture(autouse=True)
@@ -24,8 +24,9 @@ def _seed_task(
     tool_count: int = 1,
     started: bool = True,
 ) -> None:
-    from paios.db.base import sync_session_scope
-    from datetime import datetime, timezone
+    from datetime import datetime
+
+    from veyron.db.base import sync_session_scope
 
     with sync_session_scope() as session:
         task = Task(
@@ -38,11 +39,11 @@ def _seed_task(
             tool_count=tool_count,
         )
         if started:
-            task.started_at = datetime.now(timezone.utc).replace(tzinfo=None)
-            task.finished_at = datetime.now(timezone.utc).replace(tzinfo=None)
+            task.started_at = datetime.now(UTC).replace(tzinfo=None)
+            task.finished_at = datetime.now(UTC).replace(tzinfo=None)
         session.add(task)
 
-    from paios.db.base import sync_session_scope
+    from veyron.db.base import sync_session_scope
     with sync_session_scope() as session:
         inv = ToolInvocation(
             task_public_id=public_id,

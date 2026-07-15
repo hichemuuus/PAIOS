@@ -7,9 +7,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
-from paios.intelligence.history.extractor import HistoryExtractor
+from veyron.intelligence.history.extractor import HistoryExtractor
 
 
 class TestHistoryExtractor:
@@ -100,9 +98,9 @@ class TestHistoryExtractor:
                 content = f.read()
                 assert content == ""
 
-    @patch("paios.intelligence.history.extractor.HistoryExtractor.extract_from_tracker")
-    @patch("paios.intelligence.history.extractor.HistoryExtractor.extract_from_eval_results")
-    @patch("paios.intelligence.history.extractor.HistoryExtractor.extract_from_tool_invocations")
+    @patch("veyron.intelligence.history.extractor.HistoryExtractor.extract_from_tracker")
+    @patch("veyron.intelligence.history.extractor.HistoryExtractor.extract_from_eval_results")
+    @patch("veyron.intelligence.history.extractor.HistoryExtractor.extract_from_tool_invocations")
     def test_run_full_extraction(
         self, mock_tool, mock_eval, mock_tracker
     ):

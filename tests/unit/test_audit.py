@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from paios.security.audit import AUDIT_DIR, read_recent, record
+from veyron.security.audit import read_recent, record
 
 
 class TestAudit:

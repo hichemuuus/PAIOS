@@ -6,12 +6,9 @@ import json
 from pathlib import Path
 
 import pytest
-
-from paios.tools.project_analyzer import (
+from veyron.tools.project_analyzer import (
     ProjectAnalyzerTool,
     analyze_project,
-    _detect_issues,
-    _detect_technologies,
 )
 
 

@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import pytest
-
-from paios.core.tracker import ExecutionTracker
-from paios.db.models import TaskStatus, TaskType
+from veyron.core.tracker import ExecutionTracker
+from veyron.db.models import TaskStatus, TaskType
 
 
 class TestExecutionTracker:
@@ -13,9 +11,10 @@ class TestExecutionTracker:
 
     def test_start_and_complete_task(self, fresh_db, stub_provider):
         """Tracker should record task start and completion."""
-        from paios.db.base import sync_session_scope
-        from paios.db.models import Task
         from uuid import uuid4
+
+        from veyron.db.base import sync_session_scope
+        from veyron.db.models import Task
 
         pid = uuid4().hex
         with sync_session_scope() as session:
@@ -81,9 +80,10 @@ class TestExecutionTracker:
 
     def test_checkpoint(self, fresh_db):
         """Tracker should save and load checkpoints."""
-        from paios.db.base import sync_session_scope
-        from paios.db.models import Task
         from uuid import uuid4
+
+        from veyron.db.base import sync_session_scope
+        from veyron.db.models import Task
 
         pid = uuid4().hex
         with sync_session_scope() as session:
@@ -98,9 +98,10 @@ class TestExecutionTracker:
 
     def test_get_task_summary(self, fresh_db):
         """Tracker should return aggregated stats."""
-        from paios.db.base import sync_session_scope
-        from paios.db.models import Task
         from uuid import uuid4
+
+        from veyron.db.base import sync_session_scope
+        from veyron.db.models import Task
 
         pid = uuid4().hex
         with sync_session_scope() as session:
@@ -122,9 +123,10 @@ class TestExecutionTracker:
 
     def test_increment_retry(self, fresh_db):
         """Tracker should track retry counts."""
-        from paios.db.base import sync_session_scope
-        from paios.db.models import Task
         from uuid import uuid4
+
+        from veyron.db.base import sync_session_scope
+        from veyron.db.models import Task
 
         pid = uuid4().hex
         with sync_session_scope() as session:

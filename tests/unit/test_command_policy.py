@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.security.command_policy import PermissionLevel, classify_command
+from veyron.security.command_policy import PermissionLevel, classify_command
 
 
 @pytest.mark.parametrize(

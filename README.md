@@ -1,6 +1,6 @@
-# PAIOS
+# Veyron
 
-**Personal AI Operating System** — an intelligent agent layer between you and
+**AI Productivity System** — an intelligent agent layer between you and
 your computer. It understands your system, remembers, plans, and acts under
 strict security controls. Not a chatbot; an AI operating interface.
 
@@ -14,6 +14,7 @@ strict security controls. Not a chatbot; an AI operating interface.
 - **Security Layer** — path validation, command classification, user confirmation flow, append-only audit logging
 - **Hybrid Memory** — structured (SQLite) with importance scoring, decay, deduplication, and semantic retrieval
 - **Micro-Model Intelligence** — intent classification and tool selection via trained scikit-learn models (TF-IDF + Logistic Regression)
+- **Desktop App** — Tauri v2 shell with system tray, backend lifecycle management, and auto-update
 - **Mission-Control UI** — React + TypeScript + Vite frontend with live WebSocket event streaming
 - **Local-First** — runs entirely offline via Ollama; no cloud dependency
 
@@ -55,13 +56,14 @@ Frontend (React+TS) ← WebSocket + REST → FastAPI API Layer
 2. **uv** — `pip install uv` or see https://docs.astral.sh/uv
 3. **Ollama** (optional, for LLM features) — install from https://ollama.com
 4. **Node.js 18+** (optional, for frontend development)
+5. **Rust** (optional, for desktop app) — install from https://rustup.rs
 
 ## Quickstart
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/paios.git
-cd paios
+git clone https://github.com/yourusername/veyron.git
+cd veyron
 
 # Install backend dependencies
 uv venv --python 3.12
@@ -72,7 +74,7 @@ cp config.example.yaml config.yaml
 cp .env.example .env
 
 # Run the API
-uv run uvicorn paios.main:app --reload
+uv run uvicorn veyron.main:app --reload
 # → http://localhost:8000  (docs at /docs)
 ```
 
@@ -85,6 +87,10 @@ npm run dev
 # → http://localhost:5173 (proxies API to backend)
 ```
 
+### Desktop App (Tauri v2)
+
+See [BUILD.md](BUILD.md) for building the Tauri desktop shell.
+
 ### Pull an Ollama model (for LLM features)
 
 ```bash
@@ -95,10 +101,10 @@ ollama pull qwen2.5:3b-instruct
 
 Settings load from (highest precedence first):
 
-1. Environment variables (`PAIOS_*`, `__` for nesting)
+1. Environment variables (`VEYRON_*`, `__` for nesting)
 2. `.env` file in the project root
 3. `config.yaml` in the project root
-4. Built-in defaults in `backend/paios/config.py`
+4. Built-in defaults in `backend/veyron/config.py`
 
 Key settings: sandbox roots, base model, Ollama URL, confirmation timeout.
 See `config.example.yaml` for the full list.
@@ -114,14 +120,14 @@ See `config.example.yaml` for the full list.
 ## Project Layout
 
 ```
-paios/
+veyron/
 ├── ARCHITECTURE.md           # Architecture reference
 ├── DECISIONS.md              # Design decisions log
 ├── ROADMAP.md                # Phase milestones
 ├── IMPLEMENTATION_PLAN.md    # Build plan
 ├── RELIABILITY.md            # Reliability targets
 ├── pyproject.toml            # Python dependencies
-├── backend/paios/            # FastAPI + AI core + tools + memory + security
+├── backend/veyron/           # FastAPI + AI core + tools + memory + security
 │   ├── api/                  # REST + WebSocket routes
 │   ├── core/                 # Agent, Planner, Context, Events
 │   ├── db/                   # SQLite models and session management

@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import pytest
-
-from paios.core.events import get_bus
-from paios.security.command_policy import PermissionLevel
-from paios.security.confirmations import ConfirmationManager, get_manager, reset_manager
+from veyron.core.events import get_bus
+from veyron.security.command_policy import PermissionLevel
+from veyron.security.confirmations import ConfirmationManager, get_manager, reset_manager
 
 
 class TestConfirmationManager:

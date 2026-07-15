@@ -1,13 +1,13 @@
-# PAIOS configuration.
+# Veyron configuration.
 # Copy to config.yaml and edit. config.yaml is gitignored.
-# Every key here is optional; built-in defaults live in backend/paios/config.py.
+# Every key here is optional; built-in defaults live in backend/veyron/config.py.
 
 environment: dev  # dev | prod
 
 # security:
 #   sandbox_roots:
 #     - "C:\\Users\\YourUsername"
-#     - "C:\\Users\\YourUsername\\projects\\paios"
+#     - "C:\\Users\\YourUsername\\projects\\veyron"
 #   confirm_timeout_seconds: 120
 #   agent_max_iterations: 12
 #   max_tool_output_chars: 8000
@@ -19,6 +19,14 @@ environment: dev  # dev | prod
 #   temperature: 0.2
 #   max_tokens: 1024
 #   require_local_model: true
+#   # Remote fallback provider (OpenAI-compatible).
+#   # When enabled and local Ollama is unavailable, the agent falls back
+#   # to this remote provider without blocking.
+#   remote_enabled: false
+#   remote_url: "https://api.openai.com/v1"
+#   remote_api_key: "sk-..."
+#   remote_model: "gpt-4o-mini"
+#   remote_embedding_model: "text-embedding-3-small"
 
 # server:
 #   host: "127.0.0.1"

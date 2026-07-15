@@ -6,19 +6,17 @@ import json
 from pathlib import Path
 
 import pytest
-
-from paios.intelligence.training.dataset import TrainingDataset, TrainingExample
-from paios.intelligence.training.preparation.splitter import (
+from veyron.intelligence.training.dataset import TrainingDataset, TrainingExample
+from veyron.intelligence.training.preparation.formatter import DatasetFormatter
+from veyron.intelligence.training.preparation.splitter import (
     INTENT_CATEGORIES,
     DatasetSplitter,
     load_jsonl_as_examples,
 )
-from paios.intelligence.training.preparation.validator import (
+from veyron.intelligence.training.preparation.validator import (
     DatasetValidator,
     ValidationReport,
 )
-from paios.intelligence.training.preparation.formatter import DatasetFormatter
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

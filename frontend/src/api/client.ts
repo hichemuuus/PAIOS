@@ -1,5 +1,5 @@
 /**
- * Typed REST client for the PAIOS backend.
+ * Typed REST client for the Veyron backend.
  *
  * All paths are relative to `/api` and rely on the Vite dev proxy
  * (vite.config.ts) in dev and FastAPI StaticFiles in prod.

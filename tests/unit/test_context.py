@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from paios.core.context import build_system_prompt, initial_messages, trim_history
-from paios.llm.base import Message
+from veyron.core.context import build_system_prompt, initial_messages, trim_history
+from veyron.llm.base import Message
 
 
 class TestContext:

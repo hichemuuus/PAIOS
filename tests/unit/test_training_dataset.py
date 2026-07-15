@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-from paios.intelligence.training.dataset import TrainingDataset, TrainingExample
+from veyron.intelligence.training.dataset import TrainingDataset, TrainingExample
 
 
 def _make_example(request: str, quality: float = 0.8, success: bool = True) -> TrainingExample:

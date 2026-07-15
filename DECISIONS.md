@@ -1,4 +1,4 @@
-# PAIOS — DECISIONS LOG
+# Veyron — Decisions Log
 
 Running log of assumptions and decisions made during autonomous build.
 Per the autonomy directive, these are noted here rather than asked.
@@ -11,7 +11,7 @@ Format: `[DATE] DECISION — rationale`
 
 [2026-07-11] PACKAGING — Local web app. FastAPI serves the React UI at `localhost:8000`. No desktop wrapper for v1; Tauri/Electron remains a future option without rearchitecting.
 
-[2026-07-11] LOCATION — Project root is `paios/` at the repository root.
+[2026-07-11] LOCATION — Project root is `veyron/` at the repository root.
 
 [2026-07-11] MODEL STRATEGY — Hybrid. Tier-1: small custom-trained micro-models (router, tool selector, command safety, memory importance). Tier-2: open-weights base model via Ollama (default Phi-3.5-mini / Qwen2.5-3B). No pretraining-from-scratch for general reasoning.
 
@@ -25,7 +25,7 @@ Format: `[DATE] DECISION — rationale`
 
 [2026-07-11] DEPENDENCY MANAGEMENT — `pyproject.toml` with `uv` for backend, `npm` for frontend. Chosen for speed and reproducibility.
 
-[2026-07-11] PYTHON PROJECT LAYOUT — `src`-less layout (`backend/paios/...`) chosen over `src/paios/...` for simpler imports during early development; will revisit if packaging becomes an issue.
+[2026-07-11] PYTHON PROJECT LAYOUT — `src`-less layout (`backend/veyron/...`) chosen over `src/veyron/...` for simpler imports during early development; will revisit if packaging becomes an issue.
 
 [2026-07-11] SETTINGS MANAGEMENT — Pydantic `BaseSettings` reading from `.env` + a `config.yaml` fallback. All tunable values live in one place.
 

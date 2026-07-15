@@ -23,6 +23,16 @@ frontend/dist/
 frontend/.vite/
 *.tsbuildinfo
 
+# Rust / Tauri build artifacts
+frontend/src-tauri/target/
+frontend/src-tauri/binaries/
+
+# Sidecar build artifacts
+scripts/build/
+
+# Tauri auto-generated schemas
+frontend/src-tauri/gen/
+
 # Editors
 .vscode/
 .idea/
@@ -43,6 +53,8 @@ config.yaml
 
 # Internal / handoff docs (never public)
 HANDOFF.md
+PHASE*_REPORT.md
+**/PHASE*_REPORT.md
 
 # Runtime interaction data (never commit)
 data/

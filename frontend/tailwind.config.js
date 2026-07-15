@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 //
-// PAIOS — Nocturne (Warm Dark) design system.
+// Veyron design system — Warm Dark palette.
 // A calm, premium dark surface — dense data console, not editorial.
 // - Warm dark surfaces (no pure black)
 // - Three-tier text: primary / secondary / muted
@@ -17,7 +17,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Nocturne neutral ramp — dark surfaces at low numbers, text at high.
+        // Neutral ramp — dark surfaces at low numbers, text at high.
         // This keeps the 50=lightest / 950=darkest Tailwind convention while
         // mapping the old `ink-*` text classes to light-on-dark text values.
         ink: {

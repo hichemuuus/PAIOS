@@ -326,7 +326,7 @@
     },
     {
       "id": "task_read_package",
-      "prompt": "Read the file at backend/paios/__init__.py",
+      "prompt": "Read the file at backend/veyron/__init__.py",
       "category": "basic",
       "expected_tools": ["filesystem_read"],
       "min_steps": 1,
@@ -342,7 +342,7 @@
     },
     {
       "id": "task_error_recovery",
-      "prompt": "Read the file /nonexistent/foo.txt, and if that fails read backend/paios/__init__.py instead",
+      "prompt": "Read the file /nonexistent/foo.txt, and if that fails read backend/veyron/__init__.py instead",
       "category": "intermediate",
       "expected_tools": ["filesystem_read", "filesystem_read"],
       "min_steps": 1,
@@ -358,7 +358,7 @@
     },
     {
       "id": "task_complex_replan",
-      "prompt": "List files in the current directory, then check CPU usage, then read backend/paios/__init__.py and summarize",
+      "prompt": "List files in the current directory, then check CPU usage, then read backend/veyron/__init__.py and summarize",
       "category": "advanced",
       "expected_tools": ["filesystem_read", "system_monitor", "filesystem_read"],
       "min_steps": 3,
