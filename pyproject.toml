@@ -71,7 +71,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-ra --strict-markers"
-pythonpath = ["backend"]
+pythonpath = ["backend", "."]
 
 [tool.ruff]
 line-length = 100
