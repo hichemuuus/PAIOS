@@ -125,7 +125,7 @@ class TestIntelligenceLayerEnabled:
             get_settings().model, "micro_model_confidence_threshold", 0.99
         )
         monkeypatch.setattr(
-            "veyron.intelligence.intent_router.inference.route_request",
+            "veyron.core.intelligence.model_route_request",
             lambda req: IntentRouterPrediction(
                 request=req,
                 mode="react", mode_confidence=0.95,
@@ -136,7 +136,7 @@ class TestIntelligenceLayerEnabled:
             ),
         )
         monkeypatch.setattr(
-            "veyron.intelligence.intent.inference.classify_intent",
+            "veyron.core.intelligence.classify_intent",
             lambda text, model_path=None: ClassifierResult(
                 category="system_management",
                 confidence=0.95,
