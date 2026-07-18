@@ -87,6 +87,10 @@ backend/mlflow.db
 backend/backend.err
 frontend/vite.err
 
+# MLflow experiment tracking
+mlruns/
+backend/mlruns/
+
 # Screenshots
 screenshot*.png
 
