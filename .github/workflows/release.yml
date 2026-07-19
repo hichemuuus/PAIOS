@@ -96,15 +96,16 @@ jobs:
           TAURI_SIGNING_PASSPHRASE: ${{ secrets.UPDATER_PASSPHRASE }}
 
       - name: Write signing key
-        run: |
-          echo '${{ secrets.UPDATER_PRIVATE_KEY }}' > veyron-updater-key.private
+        run: echo '${{ secrets.UPDATER_PRIVATE_KEY }}' > veyron-updater-key.private
+        working-directory: frontend
         shell: bash
 
       - name: Sign installer + generate latest.json
         run: |
-          python scripts/sign_update.py sign \
-            frontend/src-tauri/target/release/bundle/nsis/Veyron_*.exe \
+          python ../scripts/sign_update.py sign \
+            src-tauri/target/release/bundle/nsis/Veyron_*.exe \
             --version ${{ needs.create-release.outputs.version }}
+        working-directory: frontend
         env:
           UPDATER_PRIVATE_KEY: ${{ secrets.UPDATER_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.UPDATER_PASSPHRASE }}
