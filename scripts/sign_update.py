@@ -110,11 +110,16 @@ def sign_file(file_path: str, version: str | None = None):
                 print("WARNING: could not determine version, using 0.0.0")
 
     print(f"Signing {file_path} (v{version})...")
+    env = os.environ.copy()
+    password = os.environ.get("UPDATER_PASSPHRASE") or os.environ.get("TAURI_SIGNING_PRIVATE_KEY_PASSWORD")
+    if password:
+        env["TAURI_SIGNING_PRIVATE_KEY_PASSWORD"] = password
     result = subprocess.run(
         ["npx", "tauri", "signer", "sign",
-         "--private-key", str(key_path),
-         "--file", str(file_path)],
-        capture_output=True, text=True, check=True
+         "--private-key-path", str(key_path),
+         str(file_path)],
+        capture_output=True, text=True, check=True,
+        env=env
     )
     signature = result.stdout.strip()
 
