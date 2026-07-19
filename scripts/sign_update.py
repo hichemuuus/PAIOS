@@ -8,6 +8,8 @@ Usage:
 
 import json
 import os
+import re
+import shutil
 import sys
 import subprocess
 import tempfile
@@ -91,7 +93,6 @@ def sign_file(file_path: str, version: str | None = None):
     # Resolve version
     if version is None:
         # Try to extract from filename like Veyron_1.0.0_x64-setup.exe
-        import re
         m = re.search(r"_(\d+\.\d+\.\d+)_", file_path.name)
         if m:
             version = m.group(1)
@@ -110,12 +111,25 @@ def sign_file(file_path: str, version: str | None = None):
                 print("WARNING: could not determine version, using 0.0.0")
 
     print(f"Signing {file_path} (v{version})...")
+
+    # Resolve tauri CLI locally (avoids npx CWD and overhead issues)
+    tauri_js = (
+        Path(__file__).resolve().parent.parent
+        / "frontend" / "node_modules" / "@tauri-apps" / "cli" / "tauri.js"
+    )
+    if tauri_js.exists():
+        tauri_cli = shutil.which("node") or "node"
+        tauri_args = [str(tauri_js)]
+    else:
+        tauri_cli = "npx"
+        tauri_args = ["tauri"]
+
     env = os.environ.copy()
     password = os.environ.get("UPDATER_PASSPHRASE") or os.environ.get("TAURI_SIGNING_PRIVATE_KEY_PASSWORD")
     if password:
         env["TAURI_SIGNING_PRIVATE_KEY_PASSWORD"] = password
     result = subprocess.run(
-        ["npx", "tauri", "signer", "sign",
+        [tauri_cli] + tauri_args + ["signer", "sign",
          "--private-key-path", str(key_path),
          str(file_path)],
         capture_output=True, text=True, check=True,

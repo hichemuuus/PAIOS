@@ -95,6 +95,11 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.UPDATER_PRIVATE_KEY }}
           TAURI_SIGNING_PASSPHRASE: ${{ secrets.UPDATER_PASSPHRASE }}
 
+      - name: Write signing key
+        run: |
+          echo '${{ secrets.UPDATER_PRIVATE_KEY }}' > veyron-updater-key.private
+        shell: bash
+
       - name: Sign installer + generate latest.json
         run: |
           python scripts/sign_update.py sign \
@@ -102,6 +107,7 @@ jobs:
             --version ${{ needs.create-release.outputs.version }}
         env:
           UPDATER_PRIVATE_KEY: ${{ secrets.UPDATER_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.UPDATER_PASSPHRASE }}
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
