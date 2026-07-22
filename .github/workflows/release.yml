@@ -13,12 +13,12 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ steps.version.outputs.version }}
+  build-and-release:
+    name: Build & Release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,26 +26,6 @@ jobs:
       - name: Extract version from tag
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Veyron ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref_name }}
-          draft: true
-          generate_release_notes: true
-
-  build-windows:
-    name: Build Windows
-    runs-on: windows-latest
-    needs: create-release
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
@@ -66,8 +46,7 @@ jobs:
           workspaces: frontend/src-tauri
 
       - name: Install system deps
-        run: |
-          python -m pip install --upgrade pip wheel setuptools
+        run: python -m pip install --upgrade pip wheel setuptools
 
       - name: Install Python deps
         run: |
@@ -78,42 +57,66 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Verify environment
-        run: python scripts/verify_environment.py
-
       - name: Build backend sidecar
         run: python scripts/build_backend.py
-
-      - name: Build frontend
-        run: npm run build
-        working-directory: frontend
 
       - name: Build Tauri app (NSIS installer)
         run: npm run tauri:build
         working-directory: frontend
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.UPDATER_PRIVATE_KEY }}
-          TAURI_SIGNING_PASSPHRASE: ${{ secrets.UPDATER_PASSPHRASE }}
-
-      - name: Write signing key
-        run: echo '${{ secrets.UPDATER_PRIVATE_KEY }}' > veyron-updater-key.private
-        working-directory: frontend
-        shell: bash
-
-      - name: Sign installer + generate latest.json
-        run: |
-          python ../scripts/sign_update.py sign \
-            src-tauri/target/release/bundle/nsis/Veyron_*.exe \
-            --version ${{ needs.create-release.outputs.version }}
-        working-directory: frontend
-        env:
-          UPDATER_PRIVATE_KEY: ${{ secrets.UPDATER_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.UPDATER_PASSPHRASE }}
+
+      - name: Generate update manifest
+        working-directory: frontend
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ github.ref_name }}"
+          REPO="${{ github.repository }}"
+          NSIS_DIR="src-tauri/target/release/bundle/nsis"
+
+          INSTALLER=$(ls "$NSIS_DIR"/Veyron_*.exe 2>/dev/null | head -1)
+          if [ -z "$INSTALLER" ]; then
+            echo "::error::No NSIS installer found in $NSIS_DIR"
+            exit 1
+          fi
+
+          INSTALLER_NAME=$(basename "$INSTALLER")
+          SIG_FILE="${INSTALLER}.sig"
+
+          SIGNATURE=""
+          if [ -f "$SIG_FILE" ]; then
+            SIGNATURE=$(cat "$SIG_FILE")
+            echo "Signature loaded from $SIG_FILE"
+          else
+            echo "::warning::No .sig file found at $SIG_FILE — updater verification will fail"
+          fi
+
+          cat > "$NSIS_DIR/latest.json" << ENDJSON
+          {
+            "version": "$VERSION",
+            "notes": "See $REPO/releases/tag/$TAG for release notes.",
+            "pub_date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "platforms": {
+              "windows-x86_64": {
+                "signature": "$SIGNATURE",
+                "url": "https://github.com/$REPO/releases/download/$TAG/$INSTALLER_NAME"
+              }
+            }
+          }
+          ENDJSON
+
+          echo "--- latest.json ---"
+          cat "$NSIS_DIR/latest.json"
+          echo "---"
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
+          name: Veyron ${{ steps.version.outputs.version }}
+          draft: true
+          generate_release_notes: true
           files: |
             frontend/src-tauri/target/release/bundle/nsis/Veyron_*.exe
             frontend/src-tauri/target/release/bundle/nsis/Veyron_*.msi

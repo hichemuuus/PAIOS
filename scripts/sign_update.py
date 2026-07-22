@@ -66,7 +66,7 @@ def _resolve_key() -> tuple[Path, bool]:
         val = os.environ.get(env_var)
         if val:
             key_path.write_text(val)
-            print(f"Key written from ${env_var}")
+            print(f"Key written from env var {env_var}")
             return key_path, True
 
     print("Error: signing key not found.")
@@ -148,7 +148,7 @@ def sign_file(file_path: str, version: str | None = None):
     update_json = {
         "version": version,
         "notes": "See release notes for details.",
-        "pub_date": __import__("datetime").datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "pub_date": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "platforms": {
             "windows-x86_64": {
                 "signature": signature,
